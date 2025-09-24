@@ -1,0 +1,78 @@
+.fund-transfer-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 64px);
+  padding: 24px;
+
+  .transfer-card {
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+
+    .ant-card-meta-title {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .ant-card-meta-description {
+      font-size: 14px;
+      color: #8c8c8c;
+      text-align: right;
+      margin-bottom: 24px;
+    }
+
+    .full-width-input,
+    .full-width-radio-group {
+      width: 100%;
+    }
+
+    .full-width-radio-group .ant-radio-button-wrapper {
+      width: 50%;
+      text-align: center;
+    }
+
+    .final-amount-display {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1890ff;
+      display: block; 
+      text-align: left;
+      padding-top: 4px;
+    }
+
+    .form-footer {
+      margin-top: 32px;
+      text-align: left;
+
+      .submit-button {
+        height: 40px;
+        padding: 0 30px;
+        font-size: 16px;
+        border-radius: 20px;
+      }
+    }
+
+    .ant-form-item-label {
+      text-align: right;
+    }
+
+    @media (max-width: 767px) {
+      padding: 16px;
+      .ant-card-meta-title {
+        font-size: 20px;
+      }
+      .final-amount-display {
+        text-align: right;
+      }
+      .form-footer {
+        text-align: center;
+        .submit-button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

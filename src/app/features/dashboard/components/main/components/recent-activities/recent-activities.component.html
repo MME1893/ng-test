@@ -1,0 +1,21 @@
+<nz-card class="activity-card" [nzBordered]="false">
+  <div class="activity-card__header">
+    <h3>آخرین فعالیت‌ها</h3>
+    <p class="activity-card__subtitle">فعالیت‌های اخیر در سیستم</p>
+  </div>
+
+  <div class="activity-card__list">
+    @for(activity of activities; track activity;) {
+    <div class="activity-card__item">
+      <div class="activity-card__icon">
+        <span nz-icon [nzType]="activity.icon" nzTheme="outline"></span>
+      </div>
+      <div class="activity-card__content">
+        <h4>{{ activity.title }}</h4>
+        <p>{{ activity.description }}</p>
+        <span class="activity-card__time">{{ activity.time }}</span>
+      </div>
+    </div>
+    }
+  </div>
+</nz-card>

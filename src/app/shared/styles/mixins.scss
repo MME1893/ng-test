@@ -1,0 +1,407 @@
+// @mixin custome-scrollbar() {
+//   scrollbar-width: thin;
+//   // scrollbar-color: #555 #001529;
+
+//   &::-webkit-scrollbar {
+//     width: 8px;
+//   }
+
+//   &::-webkit-scrollbar-track {
+//     // background: #001529;
+//     border-radius: 4px;
+//   }
+
+//   &::-webkit-scrollbar-thumb {
+//     background-color: #555;
+//     border-radius: 4px;
+//     // border: 2px solid #001529;
+//   }
+
+//   &::-webkit-scrollbar-thumb:hover {
+//     background-color: #888;
+//   }
+// }
+
+// @mixin custom-dark-modal(
+//   $bgColor: #001529,
+//   $borderColor: #334155,
+//   $titleColor: #e2e8f0,
+//   $textColor: #94a3b8,
+//   $inputBg: #1e293b,
+//   $primaryBtnBg: #38bdf8,
+//   $primaryBtnColor: #0f172a,
+//   $primaryBtnHoverBg: #7dd3fc
+// ) {
+//   // Using ::ng-deep to penetrate component encapsulation for nz-modal
+//   ::ng-deep {
+//     .ant-modal-content {
+//       // background-color: $bgColor !important;
+//     }
+
+//     .ant-modal-header {
+//       // background-color: $bgColor !important;
+//       // border-bottom: 1px solid $borderColor;
+//       .ant-modal-title {
+//         // color: $titleColor;
+//       }
+//     }
+
+//     .ant-modal-close-x {
+//       // color: $textColor;
+//     }
+
+//     .ant-modal-body {
+//       p {
+//         // color: $textColor;
+//       }
+
+//       label {
+//         // color: $textColor;
+//       }
+//       // --- Dark Theme for Inputs ---
+//       input,
+//       textarea {
+//         // background-color: $inputBg !important;
+//         // color: $titleColor !important;
+//         // border: 1px solid $borderColor !important;
+//         // border-radius: 4px !important;
+
+//         &::placeholder {
+//           color: $textColor;
+//           opacity: 0.7;
+//         }
+
+//         &:focus,
+//         &:focus-within {
+//           border-color: $primaryBtnBg !important;
+//           outline: none !important;
+//           box-shadow: 0 0 0 2px rgba($primaryBtnBg, 0.2) !important;
+//         }
+//       }
+//     }
+
+//     .ant-modal-footer {
+//       background-color: $bgColor;
+//       border-top: 1px solid $borderColor;
+
+//       .ant-btn-primary {
+//         background-color: $primaryBtnBg;
+//         border-color: $primaryBtnBg;
+//         color: $primaryBtnColor;
+//         &:hover,
+//         &:focus {
+//           background-color: $primaryBtnHoverBg;
+//           border-color: $primaryBtnHoverBg;
+//         }
+//       }
+
+//       .ant-btn {
+//         background-color: transparent;
+//         border-color: $borderColor;
+//         color: $titleColor;
+//         &:hover,
+//         &:focus {
+//           border-color: $primaryBtnBg;
+//           color: $primaryBtnBg;
+//         }
+//       }
+//     }
+//   }
+// }
+
+// @mixin custom-dark-card(
+//   $bgColor: #001529,
+//   $borderColor: rgba(255, 255, 255, 0.1),
+//   $borderRadius: 8px,
+//   $headerPadding: 1.5rem 1.5rem 1rem 1.5rem,
+//   $bodyPadding: 1.5rem,
+//   $titleColor: #f1f5f9,
+//   $subtitleColor: #94a3b8
+// ) {
+//   background-color: $bgColor;
+//   border: 1px solid $borderColor;
+//   border-radius: $borderRadius;
+//   display: flex;
+//   flex-direction: column;
+
+//   &__header {
+//     padding: $headerPadding;
+//     border-bottom: 1px solid $borderColor;
+//   }
+
+//   &__title {
+//     margin: 0;
+//     color: $titleColor;
+//     font-size: 1.1rem;
+//     font-weight: 500;
+//   }
+
+//   &__subtitle {
+//     margin: 0.5rem 0 0;
+//     color: $subtitleColor;
+//   }
+
+//   &__body {
+//     padding: $bodyPadding;
+//   }
+// }
+
+// @mixin dark-table-theme(
+//   $headerBg: #001e3a,
+//   $headerColor: #cbd5e1,
+//   $headerBorder: rgba(255, 255, 255, 0.2),
+//   $evenRowBg: #002541,
+//   $oddRowBg: #002c4e,
+//   $hoverRowBg: #002a52,
+//   $cellColor: #e2e8f0,
+//   $cellBorder: rgba(255, 255, 255, 0.1)
+// ) {
+//   ::ng-deep .ant-table-wrapper {
+//     background: transparent;
+//   }
+
+//   ::ng-deep .ant-table-thead > tr > th {
+//     background-color: $headerBg;
+//     color: $headerColor;
+//     border-bottom: 1px solid $headerBorder;
+//     text-align: right;
+//   }
+
+//   ::ng-deep .ant-table-tbody > tr {
+//     &:nth-child(even) > td {
+//       background-color: $evenRowBg;
+//     }
+
+//     &:nth-child(odd) > td {
+//       background-color: $oddRowBg;
+//     }
+
+//     &:hover > td {
+//       background-color: $hoverRowBg;
+//     }
+
+//     td {
+//       color: $cellColor;
+//       border-bottom: 1px solid $cellBorder;
+//       text-align: right;
+//       transition: background-color 0.2s;
+//     }
+//   }
+// }
+
+// @mixin custom-dark-input(
+//   $bgColor: #001e3a,
+//   $textColor: #cbd5e1,
+//   $borderColor: #334155,
+//   $placeholderColor: #94a3b8,
+//   $focusBorderColor: #38bdf8,
+//   $iconColor: #94a3b8
+// ) {
+//   // Apply to a wrapper around nz-input-group for best results
+//   ::ng-deep {
+//     .ant-input,
+//     .ant-input-affix-wrapper {
+//       background-color: $bgColor !important;
+//       color: $textColor !important;
+//       border: 1px solid $borderColor !important;
+//       padding: 0.7rem !important;
+//       border-radius: 0.7rem !important;
+
+//       &::placeholder {
+//         color: $placeholderColor;
+//       }
+//       .ant-input {
+//         background-color: transparent !important;
+//       }
+//     }
+
+//     .ant-input-prefix,
+//     .ant-input-suffix {
+//       color: $iconColor;
+//     }
+
+//     .ant-input-affix-wrapper:focus,
+//     .ant-input-affix-wrapper-focused,
+//     .ant-input:focus,
+//     .ant-input-focused {
+//       border-color: $focusBorderColor !important;
+//       box-shadow: 0 0 0 2px rgba($focusBorderColor, 0.2) !important;
+//     }
+
+//     .ant-input-group-addon {
+//       background-color: transparent !important;
+//       border: 2px solid $borderColor !important;
+//       border-left: none !important;
+//       width: 4rem;
+//       padding: 0.3rem;
+//       color: $iconColor !important;
+//       margin-left: 0.3rem !important;
+//       &:hover {
+//         color: $focusBorderColor !important;
+//         cursor: pointer;
+//       }
+//     }
+
+//     .ant-input-search-button {
+//       background: $bgColor !important;
+//       transition: color 0.2s ease-in-out;
+//       &:hover {
+//         color: $focusBorderColor !important;
+//       }
+//     }
+//   }
+// }
+
+// @mixin custom-dark-select(
+//   $bgColor: #001e3a,
+//   $textColor: #cbd5e1,
+//   $borderColor: #334155,
+//   $placeholderColor: #94a3b8,
+//   $focusBorderColor: #38bdf8,
+//   $iconColor: #94a3b8,
+//   $dropdownBg: #001529,
+//   $optionHoverBg: #002a52,
+//   $optionSelectedBg: #002541,
+//   $tagBg: #334155
+// ) {
+//   ::ng-deep {
+//     // Main selector style
+//     .ant-select-selector {
+//       background-color: $bgColor !important;
+//       border: 1px solid $borderColor !important;
+//       color: $textColor !important;
+//     }
+//     .ant-select-selection-placeholder {
+//       color: $placeholderColor !important;
+//     }
+//     .ant-select-arrow {
+//       color: $iconColor !important;
+//     }
+
+//     // Focused state
+//     &.ant-select-focused .ant-select-selector,
+//     .ant-select-selector:focus {
+//       border-color: $focusBorderColor !important;
+//       box-shadow: 0 0 0 2px rgba($focusBorderColor, 0.2) !important;
+//     }
+
+//     // Dropdown panel style
+//     .ant-select-dropdown {
+//       background-color: $dropdownBg !important;
+//       border: 1px solid $borderColor !important;
+//     }
+
+//     // Dropdown options
+//     .ant-select-item {
+//       color: $textColor !important;
+//       &:hover {
+//         background-color: $optionHoverBg !important;
+//       }
+//     }
+//     .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+//       background-color: $optionSelectedBg !important;
+//     }
+
+//     // Styles for tags/multiple mode
+//     .ant-select-selection-item {
+//       background-color: $tagBg !important;
+//       border-color: transparent !important;
+//       color: $textColor !important;
+//     }
+//     .ant-select-selection-item-remove {
+//       color: $iconColor !important;
+//       &:hover {
+//         color: #fff !important;
+//       }
+//     }
+//   }
+// }
+
+// @mixin custom-dark-datepicker(
+//   $bgColor: #001e3a,
+//   $textColor: #cbd5e1,
+//   $borderColor: #334155,
+//   $placeholderColor: #94a3b8,
+//   $focusBorderColor: #38bdf8,
+//   $iconColor: #94a3b8,
+//   $dropdownBg: #001529,
+//   $headerColor: #f1f5f9,
+//   $cellHoverBg: #002a52,
+//   $cellSelectedBg: #38bdf8,
+//   $cellSelectedColor: #001529
+// ) {
+//   ::ng-deep {
+//     // Main picker input style
+//     .ant-picker {
+//       background-color: $bgColor !important;
+//       border: 1px solid $borderColor !important;
+//       color: $textColor !important;
+
+//       input {
+//         color: $textColor !important;
+//         &::placeholder {
+//           color: $placeholderColor !important;
+//         }
+//       }
+//     }
+
+//     .ant-picker-suffix,
+//     .ant-picker-clear {
+//       color: $iconColor;
+//     }
+
+//     // Focused state for the input
+//     .ant-picker-focused,
+//     .ant-picker:focus,
+//     .ant-picker:hover {
+//       border-color: $focusBorderColor !important;
+//       box-shadow: 0 0 0 2px rgba($focusBorderColor, 0.2) !important;
+//     }
+
+//     // Dropdown panel style
+//     .ant-picker-dropdown {
+//       background-color: $dropdownBg !important;
+//       border: 1px solid $borderColor !important;
+//     }
+
+//     .ant-picker-panel-container {
+//       background-color: $dropdownBg !important;
+//     }
+
+//     // Calendar Header
+//     .ant-picker-header {
+//       color: $headerColor;
+//       border-bottom: 1px solid $borderColor;
+//       button {
+//         color: $iconColor;
+//         &:hover {
+//           color: #fff;
+//         }
+//       }
+//     }
+
+//     // Day/Date cells
+//     .ant-picker-cell {
+//       color: $textColor;
+//       &:hover .ant-picker-cell-inner {
+//         background-color: $cellHoverBg !important;
+//       }
+//     }
+//     .ant-picker-cell-in-view.ant-picker-cell-today
+//       .ant-picker-cell-inner::before {
+//       border-color: $focusBorderColor !important;
+//     }
+//     .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+//       background-color: $cellSelectedBg !important;
+//       color: $cellSelectedColor !important;
+//     }
+
+//     // Footer styles (for 'Today' button)
+//     .ant-picker-footer {
+//       border-top: 1px solid $borderColor;
+//     }
+//     .ant-picker-today-btn {
+//       color: $focusBorderColor;
+//     }
+//   }
+// }

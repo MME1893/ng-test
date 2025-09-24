@@ -1,0 +1,304 @@
+<div class="banks-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-title">
+      <h1>بانک‌ها و حساب‌های بانکی</h1>
+      <p>مدیریت بانک‌ها و حساب‌های بانکی سیستم</p>
+    </div>
+    <div class="header-actions">
+      <div class="dark-search-input">
+        <!-- <nz-input-group nzSearch [nzAddOnAfter]="suffixIconSearch">
+          <input type="text" nz-input placeholder="جستجوی بانک‌ها..." />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <span nz-icon nzType="search"></span>
+        </ng-template> -->
+        <app-search></app-search>
+      </div>
+      <button
+        nz-button
+        nzType="primary"
+        nzShape="round"
+        (click)="showBankModal()"
+      >
+        <span nz-icon nzType="plus"></span>
+        بانک جدید
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        nzShape="round"
+        (click)="showAccountModal()"
+      >
+        <span nz-icon nzType="plus"></span>
+        حساب بانکی جدید
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        nzShape="round"
+        (click)="showBranchModal()"
+      >
+        <span nz-icon nzType="plus"></span>
+        شعبه جدید
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-container">
+    @for(stat of stats; track stat.title) {
+    <app-status-card
+      [value]="stat.value"
+      [title]="stat.title"
+      [icon]="stat.icon"
+      [subtitle]="''"
+    ></app-status-card>
+    }
+  </div>
+
+  <!-- Banks Table Card -->
+  <div class="custom-card">
+    <div class="custom-card__header">
+      <h2 class="custom-card__title">لیست بانک‌ها</h2>
+      <p class="custom-card__subtitle">تمام بانک‌های تعریف شده در سیستم</p>
+    </div>
+    <div class="custom-card__body">
+      <nz-table
+        #banksTable
+        [nzData]="banks"
+        [nzSize]="'middle'"
+        class="financial-table"
+      >
+        <thead>
+          <tr>
+            <th>نام بانک</th>
+            <th>توضیحات</th>
+            <th class="actions-header">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (bank of banks; track bank.id) {
+          <tr>
+            <td>{{ bank.name }}</td>
+            <td>{{ bank.description || "-" }}</td>
+            <td class="actions">
+              <button nz-button nzShape="round" nzType="primary" nzSize="small">
+                ویرایش
+              </button>
+              <button
+                nz-button
+                nzDanger
+                nzShape="round"
+                nzType="primary"
+                nzSize="small"
+                nz-popconfirm
+                nzPopconfirmTitle="آیا از حذف این بانک مطمئن هستید؟"
+                (nzOnConfirm)="deleteBank(bank.id)"
+              >
+                حذف
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isBankModalVisible"
+  nzTitle="بانک جدید"
+  (nzOnCancel)="handleBankCancel()"
+  (nzOnOk)="handleBankOk()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-subtitle">بانک جدیدی به سیستم اضافه کنید</p>
+
+    <form nz-form [formGroup]="bankForm" class="modal-form">
+      <nz-form-item>
+        <nz-form-label nzRequired>نام بانک</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا نام بانک را وارد کنید">
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="مثال: بانک ملی ایران"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>توضیحات</nz-form-label>
+        <nz-form-control>
+          <textarea
+            nz-input
+            formControlName="description"
+            placeholder="توضیحات اختیاری"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+
+    <nz-divider nzText="یا" nzOrientation="center"></nz-divider>
+
+    <div style="text-align: center">
+      <p>برای افزودن چندین بانک به صورت همزمان، از فایل CSV استفاده کنید.</p>
+      <app-file-importer
+        [buttonText]="'آپلود فایل'"
+        [buttonType]="'default'"
+        [uploadUrl]="'YOUR_BANK_UPLOAD_API_URL'"
+      >
+      </app-file-importer>
+    </div>
+  </ng-container>
+</nz-modal>
+
+<!-- Modal for Adding a New Bank Account -->
+<nz-modal
+  [(nzVisible)]="isAccountModalVisible"
+  nzTitle="حساب بانکی جدید"
+  (nzOnCancel)="handleAccountCancel()"
+  (nzOnOk)="handleAccountOk()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+  [nzWidth]="800"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-subtitle">حساب بانکی جدیدی به سیستم اضافه کنید</p>
+    <form nz-form [formGroup]="accountForm" class="modal-form">
+      <nz-row [nzGutter]="16">
+        <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>شماره حساب</nz-form-label>
+            <nz-form-control nzErrorTip="شماره حساب الزامی است">
+              <input
+                nz-input
+                formControlName="accountNo"
+                placeholder="شماره حساب"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>شماره شبا</nz-form-label>
+            <nz-form-control nzErrorTip="شماره شبا با فرمت IR... الزامی است">
+              <input nz-input formControlName="shebaNo" placeholder="IR..." />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+      <nz-row [nzGutter]="16">
+        <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>بانک</nz-form-label>
+            <nz-form-control nzErrorTip="انتخاب بانک الزامی است">
+              <nz-select
+                formControlName="bank_id"
+                nzPlaceHolder="بانک را انتخاب کنید"
+              >
+                @for (bank of banks; track bank.id) {
+                <nz-option
+                  [nzValue]="bank.id"
+                  [nzLabel]="bank.name"
+                ></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+
+        <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="12" [nzLg]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>گروه حساب</nz-form-label>
+            <nz-form-control nzErrorTip="انتخاب گروه الزامی است">
+              <nz-select
+                formControlName="account_type_id"
+                nzPlaceHolder="گروه حساب را انتخاب کنید"
+              >
+                @for (type of accountTypes; track type.id) {
+                <nz-option
+                  [nzValue]="type.id"
+                  [nzLabel]="type.name"
+                ></nz-option>
+                }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+      <nz-form-item>
+        <nz-form-label>توضیحات</nz-form-label>
+        <nz-form-control>
+          <textarea
+            nz-input
+            formControlName="description"
+            placeholder="توضیحات اختیاری"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- new branch modal -->
+
+<nz-modal
+  [(nzVisible)]="isBranchModalVisible"
+  nzTitle="شعبه جدید"
+  (nzOnCancel)="handleBranchCancel()"
+  (nzOnOk)="handleBranchOk()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-subtitle">شعبه جدیدی برای یک بانک تعریف کنید</p>
+    <form nz-form [formGroup]="branchForm" class="modal-form">
+      <nz-form-item>
+        <nz-form-label nzRequired>بانک</nz-form-label>
+        <nz-form-control nzErrorTip="انتخاب بانک الزامی است">
+          <nz-select
+            formControlName="bank_id"
+            nzPlaceHolder="بانک را انتخاب کنید"
+          >
+            @for (bank of banks; track bank.id) {
+            <nz-option [nzValue]="bank.id" [nzLabel]="bank.name"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>نام شعبه</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا نام شعبه را وارد کنید">
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="مثال: شعبه مرکزی"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>کد شعبه</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا کد شعبه را وارد کنید">
+          <input
+            nz-input
+            formControlName="branch_code"
+            placeholder="مثال: 1001"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>آدرس</nz-form-label>
+        <nz-form-control>
+          <textarea
+            nz-input
+            formControlName="address"
+            placeholder="آدرس شعبه (اختیاری)"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

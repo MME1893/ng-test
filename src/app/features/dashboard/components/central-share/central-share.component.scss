@@ -1,0 +1,106 @@
+// @use "./../../../../shared/styles/mixins" as mixins;
+
+// Apply the custom dark modal theme globally for this component
+// @include mixins.custom-dark-modal();
+
+// --- Main Page Structure ---
+.central-share-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  height: 100%;
+}
+
+// --- Page Header ---
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+
+  .header-title {
+    h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 600;
+      // color: #f1f5f9;
+    }
+    p {
+      margin: 0.25rem 0 0;
+      // color: #94a3b8;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+}
+
+// --- Dark Search Input Specific Style ---
+.dark-search-input {
+  min-width: 250px;
+  // @include mixins.custom-dark-input();
+}
+
+// --- Stats Cards (Using the shared StatusCardComponent) ---
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+// --- Custom Card for Table ---
+.custom-card {
+  // @include mixins.custom-dark-card();
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  &__body {
+    overflow-x: auto;
+    // @include mixins.custome-scrollbar();
+  }
+}
+
+// --- Table Styles ---
+.financial-table {
+  // @include mixins.dark-table-theme();
+
+  .actions-header {
+    text-align: center;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+  }
+}
+
+// --- Modal Specific Styles ---
+.modal-subtitle {
+  // color: #94a3b8;
+  margin-top: -10px;
+  margin-bottom: 24px;
+}
+
+.modal-form {
+  // @include mixins.custom-dark-input();
+  // @include mixins.custom-dark-select();
+  // @include mixins.custom-dark-datepicker();
+
+  .full-width-input {
+    width: 100%;
+  }
+
+  // Style for the select inside an input group
+  .select-after {
+    width: 80px;
+  }
+}

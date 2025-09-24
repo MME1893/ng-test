@@ -1,0 +1,255 @@
+<div class="non-liquid-assets-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-title">
+      <h1>دارایی‌های غیر نقدی</h1>
+    </div>
+  </div>
+
+  <!-- Main Form Card -->
+  <div class="custom-card">
+    <div class="custom-card__body">
+      <form nz-form [formGroup]="assetForm" (ngSubmit)="submitForm()">
+        <!-- First Section of Inputs -->
+        <nz-row [nzGutter]="[16, 16]">
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>کد تفکیکی اداره ملک</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="propertySeparationCode" />
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>پلاک ثبتی</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="registrationPlate" />
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>بخش ثبتی</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="sector" />
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <!-- Interactive Map Container -->
+        <div class="map-placeholder">
+          <label class="map-label">نقشه تفکیکی</label>
+          <div id="map" class="map-container"></div>
+        </div>
+
+        <nz-row [nzGutter]="[16, 16]">
+          <nz-col [nzXs]="24" [nzLg]="12">
+            <nz-form-item>
+              <nz-form-label>آدرس</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="address" />
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzSm]="12" [nzLg]="6">
+            <nz-form-item>
+              <nz-form-label>منطقه جغرافیایی</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="geographicalArea" />
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzSm]="12" [nzLg]="6">
+            <nz-form-item>
+              <nz-form-label>تاریخ انتقال</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker
+                  formControlName="transferDate"
+                  class="full-width-input"
+                ></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <nz-row [nzGutter]="[16, 16]">
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>شماره سند انتقال</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="transferOrderNumber" />
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>شماره قطعه</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="plotNumber" />
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>نوع کاربری</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  formControlName="usageType"
+                  nzPlaceHolder="انتخاب کنید"
+                >
+                  <nz-option nzValue="مسکونی" nzLabel="مسکونی"></nz-option>
+                  <nz-option nzValue="تجاری" nzLabel="تجاری"></nz-option>
+                  <nz-option nzValue="اداری" nzLabel="اداری"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <nz-divider></nz-divider>
+
+        <!-- Second Section of Inputs -->
+        <nz-row [nzGutter]="[16, 16]">
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>وضعیت ملک</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  formControlName="propertyStatus"
+                  nzPlaceHolder="انتخاب کنید"
+                >
+                  <nz-option nzValue="مالکیت" nzLabel="مالکیت"></nz-option>
+                  <nz-option nzValue="استیجاری" nzLabel="استیجاری"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>عرصه</nz-form-label>
+              <nz-form-control
+                ><input nz-input formControlName="area"
+              /></nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>اعیان</nz-form-label>
+              <nz-form-control
+                ><input nz-input formControlName="buildingArea"
+              /></nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <nz-row [nzGutter]="[16, 16]">
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>تاریخ خرید</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker
+                  formControlName="purchaseDate"
+                  class="full-width-input"
+                ></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>قیمت خرید</nz-form-label>
+              <nz-form-control
+                ><input nz-input formControlName="purchasePrice" type="number"
+              /></nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>تاریخ واگذاری</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker
+                  formControlName="transferDate2"
+                  class="full-width-input"
+                ></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <nz-row [nzGutter]="[16, 16]">
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>قیمت واگذاری</nz-form-label>
+              <nz-form-control
+                ><input nz-input formControlName="transferPrice" type="number"
+              /></nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>نوع واگذاری</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  formControlName="transferType"
+                  nzPlaceHolder="انتخاب کنید"
+                >
+                  <nz-option nzValue="فروش" nzLabel="فروش"></nz-option>
+                  <nz-option nzValue="اجاره" nzLabel="اجاره"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>کد نوسازی</nz-form-label>
+              <nz-form-control
+                ><input nz-input formControlName="renovationCode"
+              /></nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <nz-row [nzGutter]="[16, 16]">
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>خریداری شده از</nz-form-label>
+              <nz-form-control
+                ><input nz-input formControlName="purchasedFrom"
+              /></nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>فروش به</nz-form-label>
+              <nz-form-control
+                ><input nz-input formControlName="soldTo"
+              /></nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzXs]="24" [nzMd]="8">
+            <nz-form-item>
+              <nz-form-label>کد حسابداری</nz-form-label>
+              <nz-form-control
+                ><input nz-input formControlName="accountingCode"
+              /></nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <nz-divider></nz-divider>
+
+        <!-- Submit Button -->
+        <button
+          nz-button
+          nzType="primary"
+          nzBlock
+          nzSize="large"
+          (click)="submitForm()"
+        >
+          ذخیره اطلاعات
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

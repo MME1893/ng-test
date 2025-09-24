@@ -1,0 +1,31 @@
+.container {
+  padding: 24px;
+}
+.tab-description {
+  color: #888;
+  margin-bottom: 24px;
+}
+.sign-button {
+  font-weight: bold;
+  width: 40px;
+}
+.sign-button.active {
+  background-color: #1677ff;
+  color: white;
+  border-color: #1677ff;
+  z-index: 2;
+}
+.sign-button.active:hover {
+  background-color: #4096ff;
+  border-color: #4096ff;
+}
+
+.sign-input-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px;
+
+  input[nz-input] {
+    flex: 1;
+  }
+}

@@ -1,0 +1,22 @@
+@if(vm().isLoading) {
+<nz-spin nzTip="بارگذاری سال مالی" style="width: 140px"></nz-spin>
+} @if(vm().error && !vm().isLoading) {
+<div class="error-state">
+  <button nz-button nzType="primary" (click)="retry()">بارگذاری مجدد سال مالی</button>
+</div>
+} @if(!vm().isLoading && !vm().error){
+<nz-select
+  [nzPlaceHolder]="'سال مالی را انتخاب کنید'"
+  [nzAllowClear]="false"
+  [(ngModel)]="vm().selectedYear"
+  (ngModelChange)="onYearChange($event)"
+  style="width: 140px"
+>
+  @for (year of vm().years; track year.year) {
+  <nz-option
+    [nzLabel]="'سال مالی ' + year.year"
+    [nzValue]="year.year"
+  ></nz-option>
+  }
+</nz-select>
+}

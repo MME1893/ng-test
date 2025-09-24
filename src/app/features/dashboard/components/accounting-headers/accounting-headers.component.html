@@ -1,0 +1,196 @@
+<div class="accounting-ledger-page">
+  <div class="page-header">
+    <div class="header-title">
+      <h1>سر فصل حسابداری</h1>
+      <p>مدیریت و ساخت کدهای حسابداری به صورت درختی</p>
+    </div>
+  </div>
+
+  <nz-row [nzGutter]="[32, 32]">
+    <!-- Create New Ledger -->
+    <nz-col [nzXs]="24" [nzMd]="24" [nzLg]="12">
+      <div class="custom-card">
+        <div class="custom-card__header">
+          <h2 class="custom-card__title">ایجاد سر فصل جدید</h2>
+          <p class="custom-card__subtitle">
+            یک کد حسابداری جدید به سیستم اضافه کنید
+          </p>
+        </div>
+        <div class="custom-card__body">
+          <form nz-form [formGroup]="ledgerForm" (ngSubmit)="onSubmit()">
+            <!-- Name -->
+            <nz-form-item>
+              <nz-form-label nzRequired>نام کد حسابداری</nz-form-label>
+              <nz-form-control nzErrorTip="لطفا نام کد را وارد کنید">
+                <input
+                  nz-input
+                  formControlName="accounting_name"
+                  placeholder="مثال: دارایی‌های جاری"
+                />
+              </nz-form-control>
+            </nz-form-item>
+
+            <!-- Code Parts -->
+            <nz-form-item>
+              <nz-form-label nzRequired>کد حسابداری</nz-form-label>
+              <nz-form-control nzErrorTip="لطفا همه بخش‌های کد را انتخاب کنید">
+                <nz-row [nzGutter]="8">
+                  <!-- Kol -->
+                  <nz-col [nzSpan]="6">
+                    <div class="select-with-button">
+                      <nz-select
+                        formControlName="kol"
+                        nzPlaceHolder="کل"
+                        (ngModelChange)="onKolChange($event)"
+                        class="full-width"
+                      >
+                        <nz-option
+                          *ngFor="let k of kols"
+                          [nzValue]="k.id"
+                          [nzLabel]="k.code + ' - ' + k.name"
+                        ></nz-option>
+                      </nz-select>
+                      <button
+                        nz-button
+                        nzType="link"
+                        nzSize="small"
+                        (click)="openCreateModal('kol')"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </nz-col>
+
+                  <!-- Moein -->
+                  <nz-col [nzSpan]="6">
+                    <div class="select-with-button">
+                      <nz-select
+                        formControlName="moein"
+                        nzPlaceHolder="معین"
+                        [nzDisabled]="!moeins.length"
+                        (ngModelChange)="onMoeinChange($event)"
+                        class="full-width"
+                      >
+                        <nz-option
+                          *ngFor="let m of moeins"
+                          [nzValue]="m.id"
+                          [nzLabel]="m.code + ' - ' + m.name"
+                        ></nz-option>
+                      </nz-select>
+                      <button
+                        nz-button
+                        nzType="link"
+                        nzSize="small"
+                        (click)="openCreateModal('moein')"
+                        [disabled]="!ledgerForm.get('kol')?.value"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </nz-col>
+
+                  <nz-col [nzSpan]="6">
+                    <div class="select-with-button">
+                      <nz-select
+                        formControlName="tafzili"
+                        nzPlaceHolder="تفضیلی"
+                        [nzDisabled]="!tafzilis.length"
+                        (ngModelChange)="onTafziliChange($event)"
+                        class="full-width"
+                      >
+                        <nz-option
+                          *ngFor="let t of tafzilis"
+                          [nzValue]="t.id"
+                          [nzLabel]="t.code + ' - ' + t.name"
+                        ></nz-option>
+                      </nz-select>
+                      <button
+                        nz-button
+                        nzType="link"
+                        nzSize="small"
+                        (click)="openCreateModal('tafzili')"
+                        [disabled]="!ledgerForm.get('moein')?.value"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </nz-col>
+
+                  <!-- Joez -->
+                  <nz-col [nzXs]="24" [nzSm]="12" [nzMd]="6">
+                    <nz-select
+                      formControlName="joez"
+                      nzPlaceHolder="جزء"
+                      [nzDisabled]="!joezs.length"
+                      class="full-width"
+                    >
+                      <nz-option
+                        *ngFor="let j of joezs"
+                        [nzValue]="j.id"
+                        [nzLabel]="j.code + ' - ' + j.name"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-col>
+                </nz-row>
+              </nz-form-control>
+            </nz-form-item>
+
+            <div class="form-actions">
+              <button
+                nz-button
+                nzType="primary"
+                [disabled]="ledgerForm.invalid"
+              >
+                ثبت سر فصل
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </nz-col>
+
+    <nz-col [nzXs]="24" [nzLg]="12">
+      <div class="custom-card">
+        <div class="custom-card__header">
+          <h2 class="custom-card__title">کدهای حسابداری</h2>
+          <p class="custom-card__subtitle">نمایش درختی کدهای موجود</p>
+        </div>
+        <div class="custom-card__body">
+          <nz-tree
+            [nzData]="treeData"
+            [nzBlockNode]="true"
+            *ngIf="treeData.length; else emptyTree"
+          >
+          </nz-tree>
+          <ng-template #emptyTree>
+            <nz-empty nzNotFoundContent="هیچ کدی یافت نشد"></nz-empty>
+          </ng-template>
+        </div>
+      </div>
+    </nz-col>
+  </nz-row>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  [nzTitle]="modalTitle"
+  (nzOnCancel)="closeModal()"
+  (nzOnOk)="onCreateCode()"
+  [nzOkLoading]="isSubmitting"
+>
+  <form nz-form [formGroup]="createForm">
+    <nz-form-item>
+      <nz-form-label nzRequired>کد</nz-form-label>
+      <nz-form-control nzErrorTip="لطفا کد را وارد کنید">
+        <input nz-input formControlName="code" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzRequired>نام</nz-form-label>
+      <nz-form-control nzErrorTip="لطفا نام را وارد کنید">
+        <input nz-input formControlName="name" />
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-modal>

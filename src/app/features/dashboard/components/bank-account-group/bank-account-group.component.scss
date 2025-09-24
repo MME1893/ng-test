@@ -1,0 +1,106 @@
+// @import "./../../../../shared/styles/mixins";
+
+// @include custom-dark-modal();
+
+.financial-year-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    // color: #f1f5f9;
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    // color: #94a3b8;
+  }
+}
+
+.custom-card {
+  // background-color: #001529;
+  // border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+
+  &__header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    // border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  &__title {
+    margin: 0;
+    // color: #f1f5f9;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  &__subtitle {
+    margin: 0.5rem 0 0;
+    // color: #94a3b8;
+  }
+
+  &__body {
+    padding: 1.5rem;
+  }
+}
+
+.financial-table {
+  ::ng-deep .ant-table-content {
+    // @include custome-scrollbar();
+    overflow-x: auto;
+  }
+
+  ::ng-deep .ant-table-wrapper {
+    background: transparent;
+  }
+
+  ::ng-deep .ant-table-thead > tr > th {
+    // background-color: #001e3a;
+    // color: #cbd5e1;
+    // border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: right;
+  }
+
+  ::ng-deep .ant-table-tbody > tr {
+    &:nth-child(even) > td {
+      // background-color: #002541;
+    }
+
+    &:nth-child(odd) > td {
+      // background-color: #002c4e;
+    }
+
+    &:hover > td {
+      // background-color: #002a52;
+    }
+
+    td {
+      background-color: transparent;
+      // color: #e2e8f0;
+      // border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: right;
+      transition: background-color 0.2s;
+    }
+  }
+
+  ::ng-deep td .ant-btn {
+    margin-left: 0.5rem;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}

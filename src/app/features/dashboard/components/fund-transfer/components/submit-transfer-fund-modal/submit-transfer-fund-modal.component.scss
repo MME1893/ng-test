@@ -1,0 +1,29 @@
+.dynamic-field-row {
+  margin-bottom: -12px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+:host ::ng-deep .ant-form-item-label {
+  text-align: right;
+  padding-bottom: 4px;
+}
+
+.final-amount-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  // background-color: #f0f8ff;
+  border-radius: 4px;
+  // border: 1px solid #bde0ff;
+
+  .amount {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #005a9e;
+  }
+}

@@ -1,0 +1,19 @@
+<nz-card class="action-card" [nzBordered]="false">
+  <div class="action-card__content">
+    <div class="action-card__header">
+      <span nz-icon [nzType]="icon()" nzTheme="outline"></span>
+      <h3>{{ title() }}</h3>
+    </div>
+    <p class="action-card__description">{{ description() }}</p>
+    <p class="action-card__info">{{ infoText() }}</p>
+  </div>
+  
+  <button
+    nz-button
+    nzType="primary"
+    nzBlock
+    (click)="onButtonClick()">
+    <span nz-icon nzType="plus"></span>
+    {{ buttonText() }}
+  </button>
+</nz-card>

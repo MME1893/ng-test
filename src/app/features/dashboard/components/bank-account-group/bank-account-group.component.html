@@ -1,0 +1,116 @@
+<div class="financial-year-page">
+  <div class="page-header">
+    <div>
+      <h1>مدیریت گروه حساب بانکی</h1>
+      <p>تعریف و مدیریت گروه‌های حساب بانکی</p>
+    </div>
+    <button nz-button nzType="primary" nzShape="round" (click)="showModal()">
+      <span nz-icon nzType="plus"></span>
+      گروه جدید
+    </button>
+  </div>
+
+  <div class="custom-card">
+    <div class="custom-card__header">
+      <h2 class="custom-card__title">لیست گروه‌ها</h2>
+      <p class="custom-card__subtitle">تمام گروه‌های تعریف شده در سیستم</p>
+    </div>
+    <div class="custom-card__body">
+      <nz-table
+        #groupTable
+        [nzData]="accountTypes"
+        [nzSize]="'middle'"
+        class="financial-table"
+      >
+        <thead>
+          <tr>
+            <th style="width: 30%">نام گروه</th>
+            <th>توضیحات</th>
+            <th class="actions-header">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (group of accountTypes; track group.id) {
+          <tr>
+            <td>{{ group.name }}</td>
+            <td>{{ group.description || "-" }}</td>
+            <td class="actions">
+              <button nz-button nzShape="round" nzType="primary" nzSize="small">
+                ویرایش
+              </button>
+              <button
+                nz-button
+                nzDanger
+                nzShape="round"
+                nzType="primary"
+                nzSize="small"
+                nz-popconfirm
+                nzPopconfirmTitle="آیا از حذف این بانک مطمئن هستید؟"
+                (nzOnConfirm)="deleteGroup(group.id)"
+              >
+                حذف
+              </button>
+              <!-- <button nz-button nzShape="circle" nzType="text" nzSize="small">
+                <span nz-icon nzType="edit"></span>
+              </button>
+              <nz-divider nzType="vertical"></nz-divider>
+              <button
+                nz-button
+                nzShape="circle"
+                nzType="text"
+                nzDanger
+                nz-popconfirm
+                nzPopconfirmTitle="آیا از حذف این گروه مطمئن هستید؟"
+                (nzOnConfirm)="deleteGroup(group.id)"
+                nzSize="small"
+              >
+                <span nz-icon nzType="delete"></span>
+              </button> -->
+            </td>
+          </tr>
+          }
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  nzTitle="ایجاد گروه حساب جدید"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkText]="'ایجاد'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="validateForm" class="modal-form">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired
+          >نام گروه</nz-form-label
+        >
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="لطفا نام گروه را وارد کنید!"
+        >
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="مثلا حساب‌های جاری"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">توضیحات</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <textarea
+            nz-input
+            formControlName="description"
+            placeholder="(اختیاری)"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

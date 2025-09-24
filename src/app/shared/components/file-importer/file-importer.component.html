@@ -1,0 +1,45 @@
+<button nz-button [nzType]="buttonType" (click)="fileInput.click()">
+  <i nz-icon nzType="upload"></i>
+  <span>{{ buttonText }}</span>
+</button>
+
+<input
+  type="file"
+  #fileInput
+  (change)="onFileSelected($event)"
+  accept=".csv"
+  style="display: none"
+/>
+
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  [nzTitle]="'پیش‌نمایش و ویرایش فایل CSV'"
+  [nzOkText]="'ارسال'"
+  [nzCancelText]="'لغو'"
+  (nzOnOk)="submitData()"
+  (nzOnCancel)="handleCancel()"
+  [nzWidth]="'80%'"
+  [nzOkLoading]="isSubmitting"
+>
+  <ng-container *nzModalContent>
+    <p>می‌توانید نام ستون‌ها را قبل از ارسال ویرایش کنید.</p>
+    <nz-table #csvTable [nzData]="rows" [nzScroll]="{ y: '400px' }">
+      <thead>
+        <tr>
+          <th *ngFor="let header of headers; let i = index">
+            <input nz-input placeholder="نام ستون" [(ngModel)]="headers[i]" />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(row of csvTable.data; track $index){
+        <tr>
+          @for(cell of row; track $index) {
+          <td>{{ cell }}</td>
+          }
+        </tr>
+        }
+      </tbody>
+    </nz-table>
+  </ng-container>
+</nz-modal>

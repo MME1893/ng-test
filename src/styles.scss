@@ -1,0 +1,154 @@
+html,
+body {
+  font-size: 62.5%;
+  font-family: "vazir" !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "vazir";
+  src: url("../public/assets/fonts/Vazir.woff2");
+}
+@font-face {
+  font-family: "vazir-bold";
+  src: url("../public/assets/fonts/Vazir-Bold.woff2");
+}
+@font-face {
+  font-family: "vazir-thin";
+  src: url("../public/assets/fonts/Vazir-Thin.woff2");
+}
+@font-face {
+  font-family: "vazir-light";
+  src: url("../public/assets/fonts/Vazir-Light.woff2");
+}
+@font-face {
+  font-family: "vazir-medium";
+  src: url("../public/assets/fonts/Vazir-Medium.woff2");
+}
+
+.sider-menu {
+  height: 100%;
+
+  li {
+    border-radius: 1rem;
+  }
+  .ant-menu-item-selected {
+    border-radius: 1rem;
+    animation: scale-up 0.2s linear;
+    &::after {
+      content: "";
+      position: absolute;
+      border-radius: 1rem;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    }
+  }
+
+  .ant-menu-item:not(.ant-menu-item-selected):hover {
+    border-radius: 1rem;
+  }
+}
+
+.ant-menu-submenu-selected {
+  .ant-menu-submenu-title {
+    font-size: 1.4rem;
+    border-radius: 1rem;
+    transition: background 0.2s linear;
+  }
+}
+
+@keyframes scale-up {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+/* Light (default) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c4c4c4 #f5f5f5;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #c4c4c4;
+  border-radius: 8px;
+  border: 2px solid #f5f5f5;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #b1b1b1;
+}
+
+/* Dark mode */
+.dark * {
+  scrollbar-color: #555 #000; /* thumb #555, track #000 */
+}
+
+.dark *::-webkit-scrollbar-track {
+  background: #000; /* track black */
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background-color: #555; /* darker thumb */
+  border: 2px solid #000; /* blends into dark background */
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+
+//ng-zoro notification style fixes
+[dir="rtl"] .ant-notification-notice {
+  text-align: right;
+}
+
+[dir="rtl"]
+  .ant-notification-notice-with-icon
+  .ant-notification-notice-message {
+  padding-right: 48px;
+  padding-left: 24px;
+}
+
+[dir="rtl"] .ant-notification-notice-icon {
+  left: unset;
+  right: 24px;
+}
+
+[dir="rtl"] .ant-notification-notice-close {
+  right: unset;
+  left: 16px;
+}
+
+// animated theme change
+
+::view-transition-old(root) {
+  animation-delay: 1s;
+}
+
+::view-transition-new(root) {
+  animation: circle-out 1s;
+}
+
+@keyframes circle-out {
+  from {
+    clip-path: circle(0% at 0% 0%);
+  }
+  to {
+    clip-path: circle(150% at 0% 0%);
+  }
+}

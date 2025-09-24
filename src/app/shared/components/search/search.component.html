@@ -1,0 +1,77 @@
+<div
+  class="smart-search-container"
+  nz-popover
+  [nzPopoverVisible]="isPopoverVisible"
+  (nzPopoverVisibleChange)="isPopoverVisible = $event"
+  nzPopoverTrigger="click"
+  nzPopoverPlacement="bottom"
+  [nzPopoverContent]="resultsTpl"
+  [nzPopoverArrowPointAtCenter]="true"
+>
+  <nz-input-group nzCompact class="search-input-group">
+    <nz-select
+      formControlName="category"
+      [nzDisabled]="isLoadingCategories"
+      class="category-select"
+      (click)="$event.stopPropagation()"
+    >
+      @for (cat of searchCategories; track cat.key) {
+      <nz-option [nzValue]="cat.key" [nzLabel]="cat.displayName"></nz-option>
+      }
+    </nz-select>
+
+    <input
+      type="text"
+      nz-input
+      placeholder="جستجو کنید..."
+      [formControl]="queryControl"
+      (focus)="isPopoverVisible = queryControl.value.length > 0"
+    />
+
+    <span
+      nz-input-suffix
+      *ngIf="!isSearching && searchForm.get('query')?.value"
+      (click)="clearSearch()"
+    >
+      <span
+        nz-icon
+        nzType="close-circle"
+        nzTheme="fill"
+        class="clear-icon"
+      ></span>
+    </span>
+    <span nz-input-suffix *ngIf="isSearching">
+      <span nz-icon nzType="loading"></span>
+    </span>
+  </nz-input-group>
+</div>
+
+<ng-template #resultsTpl>
+  <div class="search-results-popover">
+    <nz-spin [nzSpinning]="isSearching">
+      @if (!isSearching && searchResults.length > 0) {
+      <div class="results-list">
+        @for (item of searchResults; track item.id) {
+        <nz-card nzHoverable class="result-card" (click)="onResultClick(item)">
+          <nz-card-meta [nzTitle]="item.title" [nzDescription]="item.subtitle">
+            <ng-template #nzAvatar>
+              <span
+                *ngIf="item.icon"
+                nz-icon
+                [nzType]="item.icon"
+                class="result-icon"
+              ></span>
+            </ng-template>
+          </nz-card-meta>
+        </nz-card>
+        }
+      </div>
+      } @else if (!isSearching && searchResults.length === 0) {
+      <nz-empty
+        nzNotFoundImage="simple"
+        [nzNotFoundContent]="'نتیجه‌ای یافت نشد'"
+      ></nz-empty>
+      }
+    </nz-spin>
+  </div>
+</ng-template>

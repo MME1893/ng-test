@@ -1,0 +1,63 @@
+// @use "./../../../../shared/styles/mixins" as mixins;
+
+// Apply the custom dark modal theme globally for this component
+// @include mixins.custom-dark-modal();
+// @include mixins.custom-dark-datepicker();
+
+// --- Main Page Structure ---
+.non-liquid-assets-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  height: 100%;
+}
+
+// --- Page Header ---
+.page-header {
+  .header-title {
+    h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 600;
+      // color: #f1f5f9;
+    }
+  }
+}
+
+// --- Custom Card for the Form ---
+.custom-card {
+  // @include mixins.custom-dark-card();
+  flex: 1;
+
+  &__body {
+    // Apply dark theme to all form elements within the card
+    // @include mixins.custom-dark-input();
+    // @include mixins.custom-dark-select();
+
+    // Ensure form elements have light labels
+    ::ng-deep .ant-form-item-label > label {
+      // color: #cbd5e1;
+    }
+  }
+}
+
+// --- Map Placeholder Styles ---
+.map-placeholder {
+  margin-bottom: 1.5rem;
+  .map-label {
+    display: block;
+    margin-bottom: 8px;
+    // color: #cbd5e1; // Match form labels
+  }
+  .map-container {
+    height: 400px; // Set a fixed height for the map
+    width: 100%;
+    border-radius: 8px;
+    // border: 1px solid #334155; // slate-700
+  }
+}
+
+.full-width-input {
+  width: 100%;
+}

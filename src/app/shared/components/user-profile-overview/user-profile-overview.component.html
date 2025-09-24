@@ -1,0 +1,38 @@
+<div
+  class="user-profile"
+  nz-dropdown
+  [nzDropdownMenu]="userMenu"
+  nzPlacement="topCenter"
+>
+  <div class="user-info">
+    <nz-avatar nzIcon="user"></nz-avatar>
+    @if(!isCollapsed()){
+    <span class="user-name">امیرمحمد براری</span>
+    }
+  </div>
+  @if(!isCollapsed()){
+  <span class="user-status">مدیر</span>
+  }
+</div>
+
+<nz-dropdown-menu #userMenu="nzDropdownMenu">
+  <ul nz-menu class="user-dropdown-menu">
+    <li nz-menu-item>
+      <span nz-icon nzType="user"></span>
+      <span>amirmohammadbarari415&#64;gmail.com</span>
+    </li>
+    <li nz-menu-item>
+      <span nz-icon nzType="setting"></span>
+      <span>تنظیمات</span>
+    </li>
+    <li nz-menu-divider></li>
+    <li nz-menu-item>
+      <span nz-icon nzType="question-circle"></span>
+      <span>راهنما</span>
+    </li>
+    <li nz-menu-item>
+      <span nz-icon nzType="logout"></span>
+      <span>خروج از حساب کاربری</span>
+    </li>
+  </ul>
+</nz-dropdown-menu>

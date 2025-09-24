@@ -1,0 +1,134 @@
+<div class="users-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-title">
+      <h1>مدیریت کاربران</h1>
+      <p>افزودن و مدیریت کاربران سیستم</p>
+    </div>
+    <div class="header-actions">
+      <button
+        nz-button
+        nzType="primary"
+        nzShape="round"
+        (click)="showUserModal()"
+      >
+        <span nz-icon nzType="plus"></span>
+        کاربر جدید
+      </button>
+    </div>
+  </div>
+
+  <!-- Users Table Card -->
+  <div class="custom-card">
+    <div class="custom-card__header">
+      <h2 class="custom-card__title">لیست کاربران</h2>
+      <p class="custom-card__subtitle">تمام کاربران تعریف شده در سیستم</p>
+    </div>
+    <div class="custom-card__body">
+      <nz-table
+        #usersTable
+        [nzData]="persons"
+        [nzSize]="'middle'"
+        class="financial-table"
+        [nzScroll]="{ x: '600px' }"
+      >
+        <thead>
+          <tr>
+            <th>نام و نام خانوادگی</th>
+            <th>کد ملی</th>
+            <th>شماره تلفن</th>
+            <th class="actions-header">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of persons; track user.id) {
+          <tr>
+            <td>{{ user.name }} {{ user.family }}</td>
+            <td>{{ user.national_code }}</td>
+            <td>{{ user.phone_number }}</td>
+            <td class="actions">
+              <button nz-button nzShape="round" nzType="primary" nzSize="small">
+                ویرایش
+              </button>
+              <button
+                nz-button
+                nzDanger
+                nzShape="round"
+                nzType="primary"
+                nzSize="small"
+                nz-popconfirm
+                nzPopconfirmTitle="آیا از حذف این کاربر مطمئن هستید؟"
+                (nzOnConfirm)="deletePerson(user.id)"
+              >
+                حذف
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Adding a New User -->
+<nz-modal
+  [(nzVisible)]="isUserModalVisible"
+  nzTitle="کاربر جدید"
+  (nzOnCancel)="handleUserCancel()"
+  (nzOnOk)="handleUserOk()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-subtitle">کاربر جدیدی به سیستم اضافه کنید.</p>
+    <form nz-form [formGroup]="userForm" class="modal-form">
+      <nz-row [nzGutter]="16">
+        <nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>نام</nz-form-label>
+            <nz-form-control nzErrorTip="لطفا نام را وارد کنید">
+              <input
+                nz-input
+                formControlName="name"
+                placeholder="مثال: علی"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>نام خانوادگی</nz-form-label>
+            <nz-form-control nzErrorTip="لطفا نام خانوادگی را وارد کنید">
+              <input
+                nz-input
+                formControlName="family"
+                placeholder="مثال: رضایی"
+              />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+      <nz-form-item>
+        <nz-form-label nzRequired>شماره تلفن</nz-form-label>
+        <nz-form-control nzErrorTip="یک شماره تلفن ۱۱ رقمی معتبر وارد کنید">
+          <input
+            nz-input
+            formControlName="phone_number"
+            placeholder="مثال: 09123456789"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>کد ملی</nz-form-label>
+        <nz-form-control nzErrorTip="یک کد ملی ۱۰ رقمی معتبر وارد کنید">
+          <input
+            nz-input
+            formControlName="national_code"
+            placeholder="مثال: 1234567890"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

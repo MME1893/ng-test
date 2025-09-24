@@ -1,0 +1,80 @@
+<app-page-layout>
+  <h1 page-title>مناطق شهرداری و سازمان‌ها</h1>
+  <p page-subtitle>مدیریت مناطق شهرداری و سازمان‌های مربوط به هر منطقه</p>
+
+  <div page-actions class="header-actions">
+    <!-- // search component -->
+    <button
+      nz-button
+      nzType="primary"
+      nzShape="round"
+      (click)="toggleAssingModalVisibility()"
+    >
+      <span nz-icon nzType="user-add"></span>
+      اختصاص مسئول
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      nzShape="round"
+      (click)="toggleCreateRegionModalVisibility()"
+    >
+      <span nz-icon nzType="plus"></span>
+      منطقه جدید
+    </button>
+  </div>
+
+  <h2 content-title class="custom-card__title">لیست مناطق شهرداری</h2>
+  <p content-subtitle class="custom-card__subtitle">
+    تمام مناطق شهرداری تعریف شده در سیستم
+  </p>
+  <nz-table
+    #regionsTable
+    [nzData]="vm().regions"
+    [nzSize]="'middle'"
+    class="financial-table"
+    content
+  >
+    <thead>
+      <tr>
+        <th>نام منطقه</th>
+        <th class="actions-header">عملیات</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (region of vm().regions; track region.id) {
+      <tr>
+        <td>{{ region.name }}</td>
+        <td class="actions">
+          <button nz-button nzShape="round" nzType="primary" nzSize="small">
+            ویرایش
+          </button>
+          <button
+            nz-button
+            nzDanger
+            nzShape="round"
+            nzType="primary"
+            nzSize="small"
+            nz-popconfirm
+            nzPopconfirmTitle="آیا از حذف این منطقه مطمئن هستید؟"
+            (nzOnConfirm)="deleteRegion(region.id)"
+          >
+            حذف
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </nz-table>
+</app-page-layout>
+
+@if(isCreateRegionModalVisible()) {
+<app-create-region-modal
+  (onClose)="toggleCreateRegionModalVisibility()"
+></app-create-region-modal>
+
+} @if(isAssignmentModalVisible()) {
+<app-assign-person-to-region-modal
+  (onClose)="toggleAssingModalVisibility()"
+></app-assign-person-to-region-modal>
+}

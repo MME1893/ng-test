@@ -1,0 +1,127 @@
+<nz-modal
+  [nzVisible]="true"
+  [nzWidth]="800"
+  nzTitle="پردازش پرداخت و کسورات"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isLoading"
+  nzOkText="تایید و پرداخت"
+  nzCancelText="انصراف"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="paymentForm" nzLayout="vertical">
+      <nz-row [nzGutter]="[16, 16]">
+        <nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label nzRequired>مبلغ کل تراکنش</nz-form-label>
+            <nz-form-control nzErrorTip="لطفا مبلغ کل را وارد کنید">
+              <nz-input-number
+                formControlName="totalAmount"
+                [nzStep]="10000"
+                [nzMin]="0"
+                nzPlaceHolder="مبلغ کل پرداختی را وارد کنید"
+                class="full-width"
+                [nzFormatter]="formatter"
+                [nzParser]="parser"
+              ></nz-input-number>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+      <nz-row [nzGutter]="[16, 16]">
+        <nz-col [nzXs]="24" [nzMd]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>حساب مبدا</nz-form-label>
+            <nz-form-control nzErrorTip="لطفا حساب مبدا را انتخاب کنید">
+              <nz-select
+                formControlName="sourceAccountId"
+                nzPlaceHolder="انتخاب کنید..."
+              >
+                @if (bankAccounts$ | async; as accounts) { @for (acc of
+                accounts; track acc.id) {
+                <nz-option
+                  [nzValue]="acc.id"
+                  [nzLabel]="acc.accountNo"
+                ></nz-option>
+                } }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col [nzXs]="24" [nzMd]="12">
+          <nz-form-item>
+            <nz-form-label nzRequired>حساب مقصد</nz-form-label>
+            <nz-form-control nzErrorTip="لطفا حساب مقصد را انتخاب کنید">
+              <nz-select
+                formControlName="destinationAccountId"
+                nzPlaceHolder="انتخاب کنید..."
+              >
+                @if (bankAccounts$ | async; as accounts) { @for (acc of
+                accounts; track acc.id) {
+                <nz-option
+                  [nzValue]="acc.id"
+                  [nzLabel]="acc.accountNo"
+                ></nz-option>
+                } }
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+
+      <nz-divider></nz-divider>
+
+      <h4>کسورات (مبالغ کسر شونده)</h4>
+      <div formGroupName="contributions">
+        @for(field of contributionFields; track field.id){
+        @if(getContributionControlGroup(field.id); as controlGroup){
+        <div [formGroup]="controlGroup">
+          <nz-row [nzGutter]="16" class="dynamic-field-row" nzAlign="middle">
+            <nz-col [nzXs]="24" [nzSm]="12">
+              <nz-form-item>
+                <nz-form-label>
+                  <label nz-checkbox>
+                    <input
+                      type="checkbox"
+                      formControlName="isActive"
+                      class="hidden-checkbox"
+                    />
+                    {{ field.name }}
+                  </label>
+                </nz-form-label>
+              </nz-form-item>
+            </nz-col>
+
+            <nz-col [nzXs]="24" [nzSm]="12">
+              <nz-form-item>
+                <nz-form-control
+                  [nzErrorTip]="'مبلغ ' + field.name + ' را وارد کنید.'"
+                >
+                  <nz-input-number
+                    formControlName="amount"
+                    [nzStep]="1000"
+                    [nzMin]="0"
+                    [nzPlaceHolder]="'مبلغ برای ' + field.name"
+                    class="full-width"
+                    [nzDisabled]="!controlGroup.controls['isActive']?.value"
+                    [nzFormatter]="formatter"
+                    [nzParser]="parser"
+                  >
+                  </nz-input-number>
+                </nz-form-control>
+              </nz-form-item>
+            </nz-col>
+          </nz-row>
+        </div>
+        } }
+      </div>
+
+      <nz-divider></nz-divider>
+
+      <div class="final-amount-display">
+        <span>مبلغ نهایی قابل پرداخت:</span>
+        <span class="amount"> {{ finalAmount$ | async | number }} تومان </span>
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>

@@ -1,0 +1,151 @@
+<div class="fund-percentage-page">
+  <!-- Page Header -->
+  <div class.page-header>
+    <div class="header-title">
+      <h1>درصد صندوق ذخیره سازمان ها</h1>
+      <p>مدیریت درصد صندوق هزینه برای سازمان های شهرداری</p>
+    </div>
+    <div class="header-actions">
+      <div class="dark-search-input">
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconSearch">
+          <input
+            type="text"
+            nz-input
+            placeholder="جستجوی درصد صندوق ذخیره..."
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <span nz-icon nzType="search"></span>
+        </ng-template>
+      </div>
+      <button nz-button nzType="primary" nzShape="round" (click)="showModal()">
+        <span nz-icon nzType="plus"></span>
+        درصد جدید
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-container">
+    @for(stat of stats; track stat.title) {
+    <app-status-card
+      [icon]="stat.icon"
+      [title]="stat.title"
+      [value]="stat.value"
+      [subtitle]="''"
+    ></app-status-card>
+    }
+  </div>
+
+  <!-- Funds Table Card -->
+  <div class="custom-card">
+    <div class="custom-card__header">
+      <h2 class="custom-card__title">لیست درصد صندوق ذخیره سازمان ها</h2>
+      <p class="custom-card__subtitle">
+        تمام درصد صندوق ذخیره تعریف شده برای سازمان های شهرداری
+      </p>
+    </div>
+    <div class="custom-card__body">
+      <nz-table
+        #fundsTable
+        [nzData]="displayReserves"
+        [nzSize]="'middle'"
+        class="financial-table"
+        [nzScroll]="{ x: '800px' }"
+      >
+        <thead>
+          <tr>
+            <th>سازمان شهرداری</th>
+            <th>سال مالی</th>
+            <th>درصد صندوق هزینه</th>
+            <th>توضیحات</th>
+            <th>تاریخ ایجاد</th>
+            <th class="actions-header">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of displayReserves; track item.id) {
+          <tr>
+            <td>{{ item.party_name }}</td>
+            <td>{{ item.fin_year }}</td>
+            <td>{{ item.detail.percentage }}%</td>
+            <td>{{ item.description || "-" }}</td>
+            <td>{{ item.date }}</td>
+            <td class="actions">
+              <button nz-button nzShape="round" nzType="primary" nzSize="small">
+                ویرایش
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<!-- Add New Fund Modal -->
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  nzTitle="درصد صندوق ذخیره جدید"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-subtitle">درصد صندوق ذخیره جدیدی به سیستم اضافه کنید</p>
+    <form nz-form [formGroup]="fundForm" class="modal-form">
+      <nz-form-item>
+        <nz-form-label nzRequired>سال مالی</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا سال مالی را انتخاب کنید">
+          <nz-select
+            formControlName="fin_year"
+            nzPlaceHolder="سال مالی را انتخاب کنید"
+          >
+            @for(year of financialYears; track year.year) {
+            <nz-option [nzValue]="year.year" [nzLabel]="year.year"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>سازمان شهرداری</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا سازمان را انتخاب کنید">
+          <nz-select
+            formControlName="party_id"
+            nzPlaceHolder="سازمان شهرداری را انتخاب کنید"
+          >
+            @for(org of organizations; track org.id) {
+            <nz-option [nzValue]="org.id" [nzLabel]="org.name"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>درصد صندوق هزینه (%)</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا یک درصد معتبر وارد کنید">
+          <input
+            nz-input
+            formControlName="percentage"
+            type="number"
+            placeholder="مثال: 5.5"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>توضیحات</nz-form-label>
+        <nz-form-control>
+          <textarea
+            nz-input
+            formControlName="description"
+            placeholder="توضیحات اختیاری"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

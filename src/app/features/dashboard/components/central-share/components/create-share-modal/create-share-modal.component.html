@@ -1,0 +1,69 @@
+<nz-modal
+  [nzVisible]="true"
+  nzTitle="ثبت سهم جدید"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <p>اطلاعات سهم جدید را وارد نمایید.</p>
+    <form nz-form [formGroup]="form" nzLayout="vertical" class="modal-form">
+      @if (isRegion()) {
+      <nz-form-item>
+        <nz-form-label nzRequired>انتخاب منطقه</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا یک منطقه را انتخاب کنید">
+          <nz-select
+            formControlName="party_id"
+            nzPlaceHolder="یک منطقه را انتخاب کنید"
+          >
+            @for (item of regionVm().regions; track item.id) {
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      } @else {
+      <nz-form-item>
+        <nz-form-label nzRequired>انتخاب سازمان</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا یک سازمان را انتخاب کنید">
+          <nz-select
+            formControlName="party_id"
+            nzPlaceHolder="یک سازمان را انتخاب کنید"
+          >
+            @for (item of organizations; track item.id) {
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      } @if (!isPercentage()) {
+      <nz-form-item>
+        <nz-form-label nzRequired>مبلغ (ریال)</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا مبلغ را به صورت عددی وارد کنید">
+          <nz-input-number
+            formControlName="amount"
+            [nzMin]="0"
+            [nzStep]="1000"
+            class="full-width"
+            nzPlaceHolder="مثال: 5,000,000"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      } @else {
+      <nz-form-item>
+        <nz-form-label nzRequired>درصد (%)</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا درصدی بین ۰ تا ۱۰۰ وارد کنید">
+          <nz-input-number
+            formControlName="percentage"
+            [nzMin]="0"
+            [nzMax]="100"
+            class="full-width"
+            nzPlaceHolder="مثال: 15"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      }
+    </form>
+  </ng-container>
+</nz-modal>

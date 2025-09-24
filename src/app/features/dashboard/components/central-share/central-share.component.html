@@ -1,0 +1,72 @@
+<div class="centralized-share-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-title">
+      <!-- <h1>سهم متمرکز</h1>
+      <p>مدیریت سهم متمرکز برای مناطق برخوردار شهرداری</p> -->
+    </div>
+    <div class="header-actions">
+      @if(isAmount()) {
+      <button nz-button nzType="primary" nzShape="round" (click)="toggleCreateShareModalvisibility()">
+        <span nz-icon nzType="plus"></span>
+        سهم جدید
+      </button>
+      } @if(!isAmount()){
+      <button nz-button nzType="primary" nzShape="round" (click)="submitAll()">
+        <span nz-icon nzType="plus"></span>
+        ثبت سهام برای همه
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Shares Table Card -->
+  <div class="custom-card">
+    <div class="custom-card__header">
+      <h2 class="custom-card__title">لیست سهم متمرکز {{ partTypeName() }}</h2>
+      <p class="custom-card__subtitle">
+        تمام سهم متمرکز تعریف شده برای مناطق شهرداری
+      </p>
+    </div>
+    <div class="custom-card__body">
+      <nz-table
+        #sharesTable
+        [nzData]="displayedContDetail()"
+        [nzSize]="'middle'"
+        class="financial-table"
+        [nzScroll]="{ x: '800px' }"
+      >
+        <thead>
+          <tr>
+            <th>{{ partTypeName() }} طرف حساب</th>
+            <th>مقدار</th>
+            <th>توضیحات</th>
+            <th class="actions-header">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (share of displayedContDetail(); track share.id) {
+          <tr>
+            <td>{{ share.contribution_id }}</td>
+            @if(isAmount()) {
+            <td>{{ share.amount }}</td>
+            }@else {
+            <td>{{ share.percentage }}</td>
+            }
+            <td>{{ "-" }}</td>
+            <td class="actions">
+              <button nz-button nzShape="round" nzType="primary" nzSize="small">
+                ویرایش
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+@if(isCreateShareModalVisible()) {
+  <app-create-share-modal (onClose)="closeCreateShareModal()" [contributionId]="contribution_id()" [isPercentage]="isAmount()" [isRegion]="party_type_id() === 1? true: false"></app-create-share-modal>
+}

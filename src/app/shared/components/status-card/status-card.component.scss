@@ -1,0 +1,56 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.stat-card {
+  height: 100%;
+  // background-color: #001529;
+  // color: #f9fafb;
+  // border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  position: relative;
+  transition: transform 0.2s linear;
+
+  &:hover {
+    transform: translateY(-0.4rem) scale(1.01);
+    // box-shadow: 0 0 1rem 0.3rem rgba(54, 54, 54, 0.2);
+  }
+
+  ::ng-deep .ant-card-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &__icon {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    font-size: 1.5rem;
+    // color: rgba(255, 255, 255, 0.6); // Softer white
+  }
+
+  &__subtitle {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    // color: rgba(255, 255, 255, 0.7); // Subdued subtitle
+  }
+
+  // Override NG-ZORRO default styles for the title
+  ::ng-deep .ant-statistic-title {
+    // color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  ::ng-deep .ant-statistic-content {
+    // color: #ffffff; // Bright white for main number
+  }
+}
+
+:host ::ng-deep .stat-card .ant-statistic-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+}

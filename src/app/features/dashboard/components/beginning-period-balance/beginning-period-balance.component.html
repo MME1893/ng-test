@@ -1,0 +1,168 @@
+<div class="container">
+  <nz-tabset>
+    <nz-tab nzTitle="مانده ابتدای دوره مناطق">
+      <p class="tab-description">
+        ثبت مانده بدهکاری سهم اتوبوس‌رانی، تسهیلات و سهم متمرکز برای هر منطقه
+      </p>
+      <form
+        nz-form
+        [formGroup]="mainForm"
+        (ngSubmit)="save()"
+        nzLayout="vertical"
+      >
+        <nz-row [nzGutter]="24">
+          <nz-col [nzMd]="12" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>سال مالی</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  formControlName="financialYear"
+                  nzPlaceHolder="انتخاب"
+                >
+                  @for(y of financialYearVm().years; track y) {
+                  <nz-option
+                    [nzValue]="y.year"
+                    [nzLabel]="`سال ${y.year}`"
+                  ></nz-option>
+                  }
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzMd]="12" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-label>منطقه شهرداری</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  formControlName="municipalityZone"
+                  nzPlaceHolder="انتخاب"
+                >
+                  @for(region of regionVm().regions; track region.id) {
+                  <nz-option
+                    [nzValue]="region.id"
+                    [nzLabel]="region.name"
+                  ></nz-option>
+                  }
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <nz-row [nzGutter]="24">
+          @for (field of addedFields; track $index) {
+          <nz-col
+            [nzMd]="12"
+            [nzXs]="24"
+            [formGroupName]="'dynamic_' + field.controlKey"
+          >
+            <nz-form-item>
+              <nz-form-label [title]="field.description">{{
+                getFieldPrefix(field.controlKey) + field.name
+              }}</nz-form-label>
+              <nz-form-control>
+                <nz-input-group nzCompact>
+                  <div class="sign-input-row">
+                    <button
+                      type="button"
+                      nz-button
+                      class="sign-button"
+                      nz-tooltip
+                      nzTooltipTitle="بستانکاری"
+                      [class.active]="getSignControl(field.controlKey)?.value === 1"
+                      (click)="setSign(field.controlKey, 1)"
+                    >
+                      +
+                    </button>
+                    <button
+                      type="button"
+                      nz-button
+                      class="sign-button"
+                      nz-tooltip
+                      nzTooltipTitle="بدهکاری"
+                      [class.active]="getSignControl(field.controlKey)?.value === -1"
+                      (click)="setSign(field.controlKey, -1)"
+                    >
+                      -
+                    </button>
+                    <input
+                      nz-input
+                      type="number"
+                      min="0"
+                      formControlName="value"
+                      placeholder="مبلغ را وارد کنید(ریال)"
+                    />
+                  </div>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          }
+        </nz-row>
+
+        <nz-divider
+          nzText="افزودن فیلد از سرفصل حسابداری"
+          nzOrientation="left"
+        ></nz-divider>
+        <nz-row [nzGutter]="8">
+          <nz-col [nzMd]="18" [nzXs]="24">
+            <nz-form-item>
+              <nz-form-control>
+                <nz-select
+                  [formControl]="fieldToAddControl"
+                  nzPlaceHolder="یک فیلد برای افزودن انتخاب کنید"
+                >
+                  @for(field of availableFields; track $index) {
+                  <nz-option
+                    [nzValue]="field.id"
+                    [nzLabel]="field.name"
+                  ></nz-option>
+                  }
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+          <nz-col [nzMd]="6" [nzXs]="24">
+            <button
+              nz-button
+              type="button"
+              (click)="addField()"
+              [disabled]="!fieldToAddControl.value"
+              style="width: 100%"
+            >
+              <span nz-icon nzType="plus"></span>
+              افزودن
+            </button>
+          </nz-col>
+        </nz-row>
+
+        <nz-row>
+          <nz-col [nzSpan]="24">
+            <nz-form-item>
+              <nz-form-label>توضیحات</nz-form-label>
+              <nz-form-control>
+                <textarea
+                  nz-input
+                  formControlName="description"
+                  [nzAutosize]="{ minRows: 3 }"
+                ></textarea>
+              </nz-form-control>
+            </nz-form-item>
+          </nz-col>
+        </nz-row>
+
+        <nz-form-item>
+          <nz-form-control>
+            <button nz-button nzType="primary" htmlType="submit">ذخیره</button>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </nz-tab>
+
+    <nz-tab nzTitle="مانده ابتدای دوره سازمان ها">
+      <p class="tab-description">
+        ثبت مانده بدهکاری سهم اتوبوس‌رانی، تسهیلات و سهم متمرکز برای هر سازمان
+      </p>
+    </nz-tab>
+  </nz-tabset>
+</div>

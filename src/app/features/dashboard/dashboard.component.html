@@ -1,0 +1,84 @@
+<app-dashboard-layout #layout>
+  <div siderHeader>
+    <!-- <h3 class="sider-header">سیستم مدیریت مالی</h3> -->
+  </div>
+
+  <div siderContent>
+    <ul
+      nz-menu
+      nzMode="inline"
+      class="sider-menu"
+      [nzInlineCollapsed]="layout.collapsed"
+    >
+      @for (item of menuItems(); track item.title) { @if (item.children &&
+      item.children.length > 0) {
+      <li
+        nz-submenu
+        nz-tooltip
+        nzTooltipPlacement="left"
+        [nzTooltipTitle]="layout.collapsed ? item.title : null"
+        [nzTitle]="item.title"
+        [nzIcon]="item.icon ? item.icon : null"
+      >
+        <ul>
+          @for (subItem of item.children; track subItem.title) {
+          <li
+            nz-menu-item
+            nz-tooltip
+            nzTooltipPlacement="left"
+            [nzTooltipTitle]="subItem.title"
+            [routerLink]="subItem.link"
+            [queryParams]="subItem.data"
+          >
+            @if (subItem.icon) {
+            <span nz-icon [nzType]="subItem.icon"></span>
+            }
+            <span>{{ subItem.title }}</span>
+          </li>
+          }
+        </ul>
+      </li>
+      } @else {
+      <li
+        nz-menu-item
+        nz-tooltip
+        nzTooltipPlacement="left"
+        [nzTooltipTitle]="item.title"
+        [routerLink]="item.link"
+        [queryParams]="item.data"
+      >
+        @if (item.icon) {
+        <span nz-icon [nzType]="item.icon"></span>
+        }
+        <span>{{ item.title }}</span>
+      </li>
+      } }
+    </ul>
+  </div>
+
+  <div siderFooter class="sider-footer">
+    <app-user-profile-overview
+      [isCollapsed]="layout.collapsed"
+    ></app-user-profile-overview>
+  </div>
+
+  <div mainHeader class="main-header">
+    <h2 class="header-title">سیستم مدیریت مالی شهرداری</h2>
+    <div class="left flex-row">
+      <app-financial-year-selector></app-financial-year-selector>
+      <button
+        nz-button
+        (click)="toggleTheme()"
+        nzShape="circle"
+        [nz-tooltip]="isDark() === 'dark' ? 'تغییر به روشن' : 'تغییر به تیره'"
+        nzTooltipPlacement="bottom"
+      >
+        <sp nz-icon [nzType]="isDark() === 'dark' ? 'moon' : 'sun'"></sp>
+      </button>
+    </div>
+  </div>
+
+  <div mainContent>
+    <router-outlet></router-outlet>
+  </div>
+</app-dashboard-layout>

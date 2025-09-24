@@ -1,0 +1,21 @@
+.accounting-ledger-page {
+  .custom-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    margin-bottom: 24px;
+
+    &__header {
+      margin-bottom: 16px;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+  }
+
+  .form-actions {
+    margin-top: 16px;
+    text-align: left;
+  }
+}

@@ -1,0 +1,67 @@
+<nz-layout class="app-layout">
+  <nz-sider
+    class="app-layout__sider"
+    nzWidth="25rem"
+    [nzCollapsedWidth]="collapsedWidth"
+    [nzTrigger]="null"
+    [nzCollapsible]="true"
+    [(nzCollapsed)]="collapsed"
+    [ngClass]="{ mobile: isMobile }"
+  >
+    <nz-layout class="app-layout__sider-inner">
+      <nz-header class="app-layout__sider-header">
+        <div class="sider-header-wrapper">
+          <div class="sider-header-content">
+            <button
+              class="sider-collapse-btn"
+              nz-button
+              nzType="text"
+              (click)="toggleSidebar()"
+              [nz-tooltip]="collapsed ? 'گسترش دادن' : 'جمع کردن'"
+              nzTooltipPlacement="bottom"
+            >
+              <i nz-icon [nzType]="collapsed ? 'menu-unfold' : 'menu-fold'"></i>
+            </button>
+            <ng-content select="[siderHeader]"></ng-content>
+          </div>
+        </div>
+      </nz-header>
+
+      <nz-content class="app-layout__sider-content">
+        <ng-content select="[siderContent]"></ng-content>
+      </nz-content>
+
+      <nz-footer class="app-layout__sider-footer">
+        <ng-content select="[siderFooter]"></ng-content>
+      </nz-footer>
+    </nz-layout>
+  </nz-sider>
+
+  <!-- Main -->
+  <nz-layout class="app-layout__main">
+    <nz-header class="app-layout__main-header">
+      <button
+        *ngIf="isMobile"
+        class="menu-btn"
+        nz-button
+        nzType="text"
+        (click)="toggleSidebar()"
+      >
+        <i nz-icon nzType="menu"></i>
+      </button>
+
+      <ng-content select="[mainHeader]"></ng-content>
+    </nz-header>
+
+    <nz-content class="app-layout__main-content">
+      <ng-content select="[mainContent]"></ng-content>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
+
+@if(!collapsed && isMobile) {
+  <div
+    class="sidebar-backdrop"
+    (click)="toggleSidebar()"
+  ></div>
+}

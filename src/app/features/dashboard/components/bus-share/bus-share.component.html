@@ -1,0 +1,162 @@
+<div class="bus-share-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-title">
+      <h1>سهم اتوبوسرانی</h1>
+      <p>مدیریت سهم اتوبوسرانی برای مناطق شهرداری</p>
+    </div>
+    <div class="header-actions">
+      <div class="dark-search-input">
+        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconSearch">
+          <input type="text" nz-input placeholder="جستجوی سهم اتوبوسرانی..." />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <span nz-icon nzType="search"></span>
+        </ng-template>
+      </div>
+      <button nz-button nzType="primary" nzShape="round" (click)="showModal()">
+        <span nz-icon nzType="plus"></span>
+        سهم جدید
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-container">
+    @for(stat of stats; track stat.title) {
+    <app-status-card
+      [title]="stat.title"
+      [value]="stat.value"
+      [icon]="stat.icon"
+      [subtitle]="''"
+    ></app-status-card>
+    }
+  </div>
+
+  <!-- Shares Table Card -->
+  <div class="custom-card">
+    <div class="custom-card__header">
+      <h2 class="custom-card__title">لیست سهم اتوبوسرانی</h2>
+      <p class="custom-card__subtitle">
+        تمام سهم اتوبوسرانی تعریف شده برای مناطق شهرداری
+      </p>
+    </div>
+    <div class="custom-card__body">
+      <nz-table
+        #sharesTable
+        [nzData]="displayShares"
+        [nzSize]="'middle'"
+        class="financial-table"
+        [nzScroll]="{ x: '800px' }"
+      >
+        <thead>
+          <tr>
+            <th>طرف حساب (منطقه/سازمان)</th>
+            <th>سال مالی</th>
+            <th>مبلغ سهم</th>
+            <th>توضیحات</th>
+            <th>تاریخ ایجاد</th>
+            <th class="actions-header">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (share of displayShares; track share.id) {
+          <tr>
+            <td>{{ share.party_name }}</td>
+            <td>{{ share.fin_year }}</td>
+            <td>
+              {{ share.total_amount | currency : "IRR" : "" : "1.0-0" }} ریال
+            </td>
+            <td>{{ share.description || "-" }}</td>
+            <td>{{ share.date }}</td>
+            <td class="actions">
+              <button nz-button nzShape="round" nzType="primary" nzSize="small">
+                ویرایش
+              </button>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<!-- Add New Share Modal -->
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  nzTitle="سهم اتوبوسرانی جدید"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-subtitle">سهم اتوبوسرانی جدیدی به سیستم اضافه کنید</p>
+    <form nz-form [formGroup]="shareForm" class="modal-form">
+      <nz-form-item>
+        <nz-form-label nzRequired>سال مالی</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا سال مالی را انتخاب کنید">
+          <nz-select
+            formControlName="fin_year"
+            nzPlaceHolder="سال مالی را انتخاب کنید"
+          >
+            @for(year of financialYears; track year.year) {
+            <nz-option [nzValue]="year.year" [nzLabel]="year.year"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>نوع طرف حساب</nz-form-label>
+        <nz-form-control>
+          <nz-radio-group formControlName="party_type">
+            <label nz-radio-button nzValue="region">منطقه</label>
+            <label nz-radio-button nzValue="organization">سازمان</label>
+          </nz-radio-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>انتخاب طرف حساب</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا یک مورد را انتخاب کنید">
+          <nz-select
+            formControlName="party_id"
+            nzPlaceHolder="طرف حساب را انتخاب کنید"
+          >
+            @if(shareForm.value.party_type === 'region') { @for(item of regions;
+            track item.id) {
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            } } @else { @for(item of organizations; track item.id) {
+            <nz-option [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+            } }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>مبلغ سهم اتوبوسرانی (ریال)</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا مبلغ را وارد کنید">
+          <input
+            nz-input
+            formControlName="amount"
+            type="number"
+            placeholder="مثال: 1,000,000,000"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>توضیحات</nz-form-label>
+        <nz-form-control>
+          <textarea
+            nz-input
+            formControlName="description"
+            placeholder="توضیحات اختیاری"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

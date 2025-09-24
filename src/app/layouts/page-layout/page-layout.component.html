@@ -1,0 +1,36 @@
+<nz-layout class="page-layout">
+  <nz-header class="page-layout__header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>
+          <ng-content select="[page-title]"></ng-content>
+        </h1>
+        <p>
+          <ng-content select="[page-subtitle]"></ng-content>
+        </p>
+      </div>
+      <div class="header-actions">
+        <ng-content select="[page-actions]"></ng-content>
+      </div>
+    </div>
+  </nz-header>
+
+  <nz-content class="page-layout__content">
+    <div class="content-card">
+      <div class="content-card__header">
+        <h2 class="content-card__title">
+          <ng-content select="[content-title]"></ng-content>
+        </h2>
+        <p class="content-card__subtitle">
+          <ng-content select="[content-subtitle]"></ng-content>
+        </p>
+      </div>
+      <nz-divider></nz-divider>
+      <div class="content-card__body">
+        <ng-content select="[content]"></ng-content>
+      </div>
+    </div>
+  </nz-content>
+
+  <nz-back-top [nzVisibilityHeight]="300"></nz-back-top>
+</nz-layout>

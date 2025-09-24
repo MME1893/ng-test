@@ -1,0 +1,77 @@
+<nz-modal
+  [nzVisible]="true"
+  nzTitle="اختصاص مسئول به منطقه"
+  (nzOnCancel)="onClose.emit()"
+  (nzOnOk)="onAssign()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-subtitle">یک مسئول به منطقه مورد نظر اختصاص دهید.</p>
+    <form
+      nz-form
+      [formGroup]="assignmentForm"
+      class="modal-form"
+      nzLayout="vertical"
+    >
+      <nz-form-item>
+        <nz-form-label nzRequired>منطقه</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا منطقه را انتخاب کنید">
+          <nz-select
+            formControlName="party_id"
+            nzPlaceHolder="منطقه را انتخاب کنید"
+          >
+            @for(region of regionVm().regions; track region.id) {
+            <nz-option
+              [nzValue]="region.id"
+              [nzLabel]="region.name"
+            ></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>کاربر</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا کاربر را انتخاب کنید">
+          <nz-select
+            formControlName="person_id"
+            nzPlaceHolder="کاربر را انتخاب کنید"
+          >
+            @for(person of personVm().persons; track person.id) {
+            <nz-option
+              [nzValue]="person.id"
+              [nzLabel]="person.name + ' ' + person.family"
+            ></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>نوع سمت</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا نوع سمت را انتخاب کنید">
+          <nz-select
+            formControlName="job_post_type_id"
+            nzPlaceHolder="نوع سمت را انتخاب کنید"
+          >
+            @for(postType of regionPostTypes(); track postType.id) {
+            <nz-option
+              [nzValue]="postType.id"
+              [nzLabel]="postType.name"
+            ></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzRequired>شماره تلفن</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا شماره تلفن را وارد کنید">
+          <input
+            nz-input
+            formControlName="phone"
+            placeholder="مثال: 09123456789"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

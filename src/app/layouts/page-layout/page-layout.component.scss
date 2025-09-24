@@ -1,0 +1,87 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+nz-header {
+  background-color: rgb(233, 233, 233);
+}
+
+.dark :host ::ng-deep nz-header {
+  background-color: rgb(10, 10, 10) !important;
+}
+
+.page-layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  // background-color: transparent; // Inherit background from parent
+
+  &__header {
+    padding: 1rem 2rem;
+    height: auto;
+    line-height: initial;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 8px #0000000d;
+    // border-bottom: 1px solid var(--ant-border-color-split, #f0f0f0);
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .header-title {
+      h1 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+      p {
+        margin: 0.25rem 0 0;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__content {
+    padding: 2rem;
+    flex: 1;
+    overflow-y: auto; // Allow content to scroll independently
+
+    .content-card {
+      // background: var(--ant-background-color-base, #fff);
+      border-radius: 8px;
+      //   border: 1px solid var(--ant-border-color-split, #f0f0f0);
+
+      &__header {
+        padding: 1.5rem;
+      }
+
+      &__title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      &__subtitle {
+        margin: 0.25rem 0 0;
+        // color: var(--ant-text-color-secondary, #8c8c8c);
+      }
+
+      &__body {
+        padding: 0 1.5rem 1.5rem;
+      }
+    }
+  }
+}

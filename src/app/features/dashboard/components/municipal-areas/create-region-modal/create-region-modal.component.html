@@ -1,0 +1,24 @@
+<nz-modal
+[nzVisible]="true"
+  nzTitle="منطقه جدید"
+  (nzOnCancel)="onClose.emit()"
+  (nzOnOk)="onCreateRegion()"
+  [nzOkText]="'ذخیره'"
+  [nzCancelText]="'انصراف'"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-subtitle">منطقه جدیدی به سیستم اضافه کنید.</p>
+    <form nz-form [formGroup]="regionForm" class="modal-form" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>نام منطقه</nz-form-label>
+        <nz-form-control nzErrorTip="لطفا نام منطقه را وارد کنید">
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="مثال: منطقه ۶ شهرداری"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

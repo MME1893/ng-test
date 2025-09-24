@@ -1,0 +1,80 @@
+<div class="dashboard-grid">
+  <div nz-row [nzGutter]="[16, 16]" class="mb-4">
+    <div nz-col [nzXs]="24" [nzMd]="12" [nzLg]="6">
+      <app-status-card
+        icon="area-chart"
+        title="مناطق شهرداری"
+        value="8"
+        subtitle="تمام مناطق فعال"
+      ></app-status-card>
+    </div>
+
+    <div nz-col [nzXs]="24" [nzMd]="12" [nzLg]="6">
+      <app-status-card
+        icon="usergroup-add"
+        title="طرف حساب‌ها"
+        value="48"
+        subtitle="+5 نسبت به ماه گذشته"
+      ></app-status-card>
+    </div>
+
+    <div nz-col [nzXs]="24" [nzMd]="12" [nzLg]="6">
+      <app-status-card
+        icon="bank"
+        title="تعداد بانک‌ها"
+        value="12"
+        subtitle="+2 نسبت به ماه گذشته"
+      ></app-status-card>
+    </div>
+
+    <div nz-col [nzXs]="24" [nzMd]="12" [nzLg]="6">
+      <app-status-card
+        icon="calendar"
+        title="سال مالی فعال"
+        value="1403"
+        subtitle="سال مالی جاری"
+      ></app-status-card>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="[16, 16]">
+    <div nz-col [nzXs]="24" [nzLg]="8">
+      <app-action-card
+        icon="bank"
+        title="بانک‌ها"
+        description="مدیریت بانک‌ها و حساب‌های بانکی"
+        infoText="تعداد بانک‌های ثبت شده: 12"
+        buttonText="مدیریت بانک‌ها"
+        (buttonClick)="navigateTo('/dashboard/banks')"
+      ></app-action-card>
+    </div>
+
+    <div nz-col [nzXs]="24" [nzLg]="8">
+      <app-action-card
+        icon="group"
+        title="گروه حساب بانکی"
+        description="تعریف انواع گروه‌های حساب بانکی"
+        infoText="تعداد گروه‌های تعریف شده: 5"
+        buttonText="مدیریت گروه‌ها"
+        (buttonClick)="navigateTo('/dashboard/bank-account-group')"
+      ></app-action-card>
+    </div>
+
+    <div nz-col [nzXs]="24" [nzLg]="8">
+      <app-action-card
+        icon="calendar"
+        title="سال مالی"
+        description="مدیریت سال‌های مالی سیستم"
+        infoText="سال مالی فعلی: 1403"
+        buttonText="مدیریت سال مالی"
+        (buttonClick)="navigateTo('/dashboard/financial-year')"
+      ></app-action-card>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="[16, 16]" class="mt-4">
+    <div nz-col [nzSpan]="24">
+      <app-recent-activities></app-recent-activities>
+    </div>
+  </div>
+</div>

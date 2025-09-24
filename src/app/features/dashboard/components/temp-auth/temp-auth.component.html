@@ -1,0 +1,511 @@
+<div class="container">
+    <h1>🔐 WebAuthn Test Client <span>Exercise each /api/webauthn/* endpoint</span></h1>
+
+    <section class="panel">
+      <div class="grid">
+        <label>
+          API base URL
+          <input id="apiBase" type="url" value="http://localhost:8001/api" placeholder="http://localhost:8001/api"/>
+        </label>
+        <label>
+          Authorization header
+          <textarea id="authToken" rows="3" placeholder="Bearer &lt;jwt&gt;">Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJtb2hhbW1hZCIsImF1dGhfc3RhZ2UiOiJwYXNzd29yZF92ZXJpZmllZCIsIndlYmF1dGhuX3JlcXVpcmVkIjp0cnVlLCJ3ZWJhdXRobl9jb21wbGV0ZWQiOmZhbHNlLCJleHAiOjE3NTg5MTAzNzJ9.uIehYsRMdzxf4rBqm9W6ddkfOknP3WpSJV-KDdbC1hk</textarea>
+        </label>
+      </div>
+      <div class="actions">
+        <button type="button" id="btnRegister">Start registration</button>
+        <button type="button" id="btnAuthenticate" class="secondary">Start authentication</button>
+        <button type="button" id="btnListDevices" class="ghost">List devices</button>
+        <button type="button" id="btnGetMe" class="ghost">Call /auth/me</button>
+        <button type="button" id="btnClearLog" class="ghost">Clear log</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>Delete a device</h2>
+        <label>
+          Credential ID (Base64URL from /webauthn/devices)
+          <input id="credentialId" type="text" placeholder="Paste encoded credential id"/>
+        </label>
+        <button type="button" id="btnDelete" class="ghost">Delete credential</button>
+      </div>
+      <div class="panel">
+        <h2>Registered devices</h2>
+        <div id="devices" class="devices-list"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Logs</h2>
+      <div id="log"></div>
+    </section>
+  </div>
+
+  <script>
+    const logView = document.getElementById("log");
+    const devicesView = document.getElementById("devices");
+
+    function timestamp() {
+      return new Date().toISOString().replace("T", " ").replace("Z", "");
+    }
+
+    function log(message, data, level = "info") {
+      const meta = data !== undefined ? data : "";
+      if (data instanceof Error) {
+        console.error("[", timestamp(), "]", message, data);
+      } else {
+        console.log("[", timestamp(), "]", message, data ?? "");
+      }
+
+      const entry = document.createElement("div");
+      entry.className = `log-entry ${level}`;
+      let content = `[${timestamp()}] ${message}`;
+      if (meta instanceof Error) {
+        content += ` -> ${meta.name}: ${meta.message}`;
+      } else if (meta) {
+        try {
+          content += `\n${JSON.stringify(meta, null, 2)}`;
+        } catch (err) {
+          content += "\n(unserializable data)";
+        }
+      }
+      entry.textContent = content;
+      logView.appendChild(entry);
+      logView.scrollTop = logView.scrollHeight;
+    }
+
+    function logError(message, error) {
+      log(message, error, "error");
+    }
+
+    function logSuccess(message, data) {
+      log(message, data, "success");
+    }
+
+    const bufferDecode = (value) =>
+      Uint8Array.from(
+        window.atob(value.replace(/_/g, "/").replace(/-/g, "+")),
+        (c) => c.charCodeAt(0)
+      );
+
+    const bufferEncode = (value) =>
+      window
+        .btoa(String.fromCharCode(...new Uint8Array(value)))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/g, "");
+
+    const toBufferSource = (value) => {
+      if (!value) {
+        return value;
+      }
+
+      if (value instanceof ArrayBuffer) {
+        return value;
+      }
+
+      if (ArrayBuffer.isView(value)) {
+        return value;
+      }
+
+      if (typeof value === "string") {
+        return bufferDecode(value);
+      }
+
+      throw new TypeError("Unsupported credential buffer value");
+    };
+
+    function getApiBase() {
+      const url = document.getElementById("apiBase").value.trim().replace(/\/$/, "");
+      log("Using API base", url);
+      return url;
+    }
+
+    function getAuthHeaders() {
+      const headers = { "Content-Type": "application/json" };
+      const token = document.getElementById("authToken").value.trim();
+      if (token) {
+        headers["Authorization"] = token;
+      }
+      log("Prepared headers", headers);
+      return headers;
+    }
+
+    async function readJson(response) {
+      const text = await response.text();
+      try {
+        return text ? JSON.parse(text) : {};
+      } catch (err) {
+        logError("Failed to parse JSON", err);
+        throw err;
+      }
+    }
+
+    function convertProperty(object, from, to) {
+      if (object && Object.hasOwn(object, from)) {
+        object[to] = object[from];
+        delete object[from];
+      }
+    }
+
+    function normaliseRegistrationOptions(publicKey) {
+      log("Normalising registration options", publicKey);
+      const copy = structuredClone(publicKey);
+      copy.challenge = bufferDecode(copy.challenge);
+      if (copy.user?.id) {
+        copy.user.id = bufferDecode(copy.user.id);
+      }
+      const exclude = copy.exclude_credentials ?? copy.excludeCredentials ?? [];
+      exclude.forEach((cred) => {
+        cred.id = bufferDecode(cred.id);
+      });
+      convertProperty(copy, "pub_key_cred_params", "pubKeyCredParams");
+      convertProperty(copy, "authenticator_selection", "authenticatorSelection");
+      convertProperty(copy, "exclude_credentials", "excludeCredentials");
+      if (copy.authenticatorSelection) {
+        convertProperty(copy.authenticatorSelection, "user_verification", "userVerification");
+        convertProperty(copy.authenticatorSelection, "resident_key", "residentKey");
+        convertProperty(copy.authenticatorSelection, "require_resident_key", "requireResidentKey");
+      }
+      if (copy.user) {
+        convertProperty(copy.user, "display_name", "displayName");
+      }
+      logSuccess("Registration options ready", copy);
+      return copy;
+    }
+
+    function normaliseAuthenticationOptions(publicKey) {
+      log("Normalising authentication options", publicKey);
+      const copy = structuredClone(publicKey);
+      copy.challenge = bufferDecode(copy.challenge);
+
+      const allowCredentials = (copy.allow_credentials ?? copy.allowCredentials ?? []).map((cred) => ({
+        ...cred,
+        id: toBufferSource(cred.id)
+      }));
+      copy.allowCredentials = allowCredentials;
+      delete copy.allow_credentials;
+
+      convertProperty(copy, "allow_credentials", "allowCredentials");
+      if (copy.authenticator_selection) {
+        convertProperty(copy, "authenticator_selection", "authenticatorSelection");
+      }
+      if (copy.authenticatorSelection) {
+        convertProperty(copy.authenticatorSelection, "user_verification", "userVerification");
+        convertProperty(copy.authenticatorSelection, "resident_key", "residentKey");
+        convertProperty(copy.authenticatorSelection, "require_resident_key", "requireResidentKey");
+      }
+      logSuccess("Authentication options ready", copy);
+      return copy;
+    }
+
+    async function fetchWithLogging(url, options) {
+      let bodyForLog;
+      if (options?.body) {
+        try {
+          bodyForLog = JSON.parse(options.body);
+        } catch (err) {
+          bodyForLog = "(body not JSON)";
+        }
+      }
+      log(`HTTP ${options?.method || "GET"} ${url}`, bodyForLog);
+      const response = await fetch(url, options);
+      logSuccess(`HTTP ${response.status} ${url}`);
+      return response;
+    }
+
+    async function deleteCredentialById(credentialId) {
+      const response = await fetchWithLogging(`${getApiBase()}/webauthn/devices/${encodeURIComponent(credentialId)}`, {
+        method: "DELETE",
+        headers: getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        logError("delete failed", new Error(body || response.statusText));
+        return false;
+      }
+
+      logSuccess("Device deleted", credentialId);
+      return true;
+    }
+
+    async function handleExcludedCredentials(encodedIds) {
+      if (!encodedIds.length) {
+        return true;
+      }
+
+      logError("Authenticator already registered", { encodedIds });
+      const message =
+        `This authenticator already has ${encodedIds.length} credential(s) registered.\n` +
+        `Chrome will block duplicate registrations until you remove them.\n\n` +
+        `Click OK to delete the stored credential(s) and retry, or Cancel to abort.`;
+      const confirmed = window.confirm(message);
+      if (!confirmed) {
+        log("Registration aborted because existing credentials were kept.");
+        return false;
+      }
+
+      for (const credentialId of encodedIds) {
+        const deleted = await deleteCredentialById(credentialId);
+        if (!deleted) {
+          logError("Failed to delete credential automatically", new Error(credentialId));
+          return false;
+        }
+      }
+
+      await listDevices();
+      logSuccess("Existing credentials removed. Retry registration to continue.");
+      return true;
+    }
+
+    async function startRegistration(retrying = false) {
+      log("register() invoked");
+      try {
+        const response = await fetchWithLogging(`${getApiBase()}/webauthn/registration/start`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({})
+        });
+
+        if (!response.ok) {
+          const body = await response.text();
+          logError("registration/start failed", new Error(body || response.statusText));
+          return;
+        }
+
+        const { publicKey } = await readJson(response);
+        const excludedIds = (publicKey.exclude_credentials || publicKey.excludeCredentials || []).map((cred) => cred.id);
+        if (excludedIds.length) {
+          const cleared = await handleExcludedCredentials(excludedIds);
+          if (!cleared) {
+            return;
+          }
+          if (!retrying) {
+            log("Retrying registration after removing stored credential(s)");
+            return startRegistration(true);
+          }
+        }
+
+        const options = normaliseRegistrationOptions(publicKey);
+        log("Calling navigator.credentials.create", options);
+        const credential = await navigator.credentials.create({ publicKey: options });
+        logSuccess("Credential created", credential);
+
+        const payload = {
+          id: credential.id,
+          rawId: bufferEncode(credential.rawId),
+          type: credential.type,
+          response: {
+            clientDataJSON: bufferEncode(credential.response.clientDataJSON),
+            attestationObject: bufferEncode(credential.response.attestationObject)
+          }
+        };
+        log("Sending registration complete payload", payload);
+
+        const finish = await fetchWithLogging(`${getApiBase()}/webauthn/registration/complete`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload)
+        });
+
+        const result = await readJson(finish);
+        if (!finish.ok) {
+          logError("registration/complete failed", new Error(JSON.stringify(result)));
+          return;
+        }
+
+        logSuccess("Registration completed", result);
+        alert(`Registration successful!\n\n${JSON.stringify(result, null, 2)}`);
+
+        await listDevices();
+      } catch (error) {
+        if (error?.name === "InvalidStateError") {
+          logError("Authenticator reports credential already registered. Remove it then retry.", error);
+          alert("This authenticator already has a passkey for this site. Remove the stored credential (use the Delete button) and try again.");
+        } else if (error?.name === "NotAllowedError") {
+          logError("Registration was cancelled or timed out.", error);
+        } else {
+          logError("Exception in startRegistration", error);
+        }
+      }
+    }
+
+    async function startAuthentication() {
+      log("authenticate() invoked");
+      try {
+        const response = await fetchWithLogging(`${getApiBase()}/webauthn/authentication/start`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({})
+        });
+
+        if (!response.ok) {
+          const body = await response.text();
+          logError("authentication/start failed", new Error(body || response.statusText));
+          return;
+        }
+
+        const { publicKey } = await readJson(response);
+        const options = normaliseAuthenticationOptions(publicKey);
+        log("Calling navigator.credentials.get", options);
+        const credential = await navigator.credentials.get({ publicKey: options });
+        logSuccess("Assertion obtained", credential);
+
+        const payload = {
+          id: credential.id,
+          rawId: bufferEncode(credential.rawId),
+          type: credential.type,
+          response: {
+            authenticatorData: bufferEncode(credential.response.authenticatorData),
+            clientDataJSON: bufferEncode(credential.response.clientDataJSON),
+            signature: bufferEncode(credential.response.signature),
+            userHandle: credential.response.userHandle ? bufferEncode(credential.response.userHandle) : null
+          }
+        };
+        log("Sending authentication complete payload", payload);
+
+        const finish = await fetchWithLogging(`${getApiBase()}/webauthn/authentication/complete`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload)
+        });
+
+        const result = await readJson(finish);
+        if (!finish.ok) {
+          logError("authentication/complete failed", new Error(JSON.stringify(result)));
+          return;
+        }
+
+        logSuccess("Authentication completed", result);
+        alert(`Authentication successful!\n\n${JSON.stringify(result, null, 2)}`);
+      } catch (error) {
+        if (error?.name === "NotAllowedError") {
+          logError("Authentication was cancelled or timed out.", error);
+        } else {
+          logError("Exception in startAuthentication", error);
+        }
+      }
+    }
+
+    async function listDevices() {
+      log("listDevices() invoked");
+      try {
+        const response = await fetchWithLogging(`${getApiBase()}/webauthn/devices`, {
+          method: "GET",
+          headers: getAuthHeaders()
+        });
+
+        const result = await readJson(response);
+        if (!response.ok) {
+          logError("devices list failed", new Error(JSON.stringify(result)));
+          return;
+        }
+
+        devicesView.replaceChildren();
+        if (!result.length) {
+          const empty = document.createElement("p");
+          empty.textContent = "No WebAuthn devices registered.";
+          devicesView.appendChild(empty);
+        }
+
+        result.forEach((device) => {
+          const card = document.createElement("div");
+          card.className = "device-card";
+          card.innerHTML = `
+            <div><strong>Device:</strong> ${device.device_name || "Unnamed"}</div>
+            <div><strong>Credential ID:</strong> ${device.credential_id}</div>
+            <div><strong>Sign count:</strong> ${device.sign_count}</div>
+            <div><strong>Created:</strong> ${device.created_at || ""}</div>
+            <div><strong>Last used:</strong> ${device.last_used || ""}</div>
+          `;
+          devicesView.appendChild(card);
+        });
+
+        logSuccess("Devices loaded", result);
+      } catch (error) {
+        logError("Exception in listDevices", error);
+      }
+    }
+
+    async function deleteDevice() {
+      log("deleteDevice() invoked");
+      const credentialId = document.getElementById("credentialId").value.trim();
+      if (!credentialId) {
+        logError("Credential ID required", new Error("Please provide a credential id"));
+        return;
+      }
+
+      try {
+        const deleted = await deleteCredentialById(credentialId);
+        if (!deleted) {
+          return;
+        }
+        await listDevices();
+      } catch (error) {
+        logError("Exception in deleteDevice", error);
+      }
+    }
+
+    async function getMe() {
+      log("getMe() invoked");
+      try {
+        const response = await fetchWithLogging(`${getApiBase()}/authentication/me`, {
+          method: "GET",
+          headers: getAuthHeaders()
+        });
+
+        const result = await readJson(response);
+        if (!response.ok) {
+          logError("/auth/me failed", new Error(JSON.stringify(result)));
+          return;
+        }
+
+        logSuccess("/auth/me response", result);
+        alert(`User info:\n\n${JSON.stringify(result, null, 2)}`);
+      } catch (error) {
+        logError("Exception in getMe", error);
+      }
+    }
+
+    function clearLog() {
+      log("clearLog() invoked");
+      logView.replaceChildren();
+    }
+
+    document.getElementById("btnRegister").addEventListener("click", () => {
+      log("Register button clicked");
+      startRegistration();
+    });
+
+    document.getElementById("btnAuthenticate").addEventListener("click", () => {
+      log("Authenticate button clicked");
+      startAuthentication();
+    });
+
+    document.getElementById("btnListDevices").addEventListener("click", () => {
+      log("List devices button clicked");
+      listDevices();
+    });
+
+    document.getElementById("btnDelete").addEventListener("click", () => {
+      log("Delete button clicked");
+      deleteDevice();
+    });
+
+    document.getElementById("btnGetMe").addEventListener("click", () => {
+      log("GetMe button clicked");
+      getMe();
+    });
+
+    document.getElementById("btnClearLog").addEventListener("click", () => {
+      log("Clear log button clicked");
+      clearLog();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      log("DOMContentLoaded event fired");
+      listDevices();
+    });
+  </script>

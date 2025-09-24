@@ -1,0 +1,73 @@
+.smart-search-container {
+  width: 100%;
+  max-width: 500px; // Or adjust as needed
+
+  .search-input-group {
+    display: flex;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+
+    &:focus-within {
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .category-select {
+      width: 150px; // Fixed width for category dropdown
+      .ant-select-selector {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-right: none;
+      }
+    }
+
+    input[nz-input] {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .clear-icon {
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.25);
+      transition: color 0.3s ease;
+      &:hover {
+        color: rgba(0, 0, 0, 0.45);
+      }
+    }
+  }
+}
+
+.search-results-popover {
+  width: 100%;
+  min-width: 280px;
+  max-height: 400px;
+  overflow-y: auto;
+
+  .results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .result-card {
+    border-radius: 6px;
+    .ant-card-body {
+      padding: 12px 16px;
+    }
+    .result-icon {
+      font-size: 20px;
+      margin-right: 8px;
+    }
+  }
+
+  .ant-spin-container {
+    padding: 8px;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .smart-search-container {
+    max-width: 100%;
+  }
+}

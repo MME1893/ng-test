@@ -1,0 +1,70 @@
+<div class="financial-year-page">
+  <div class="page-header">
+    <div>
+      <h1>مدیریت سال مالی</h1>
+      <p>تعریف و مدیریت سال‌های مالی سیستم</p>
+    </div>
+
+    <button nz-button nzType="primary" nzShape="round" (click)="showModal()">
+      <span nz-icon nzType="plus"></span>
+      سال مالی جدید
+    </button>
+  </div>
+
+  <div class="custom-card">
+    <div class="custom-card__header">
+      <h2 class="custom-card__title">لیست سال‌های مالی</h2>
+      <p class="custom-card__subtitle">تمام سال‌های مالی تعریف شده در سیستم</p>
+    </div>
+    <div class="custom-card__body">
+      <div class="year-tags-container">
+        @for (fYear of vm().years; track fYear.year) {
+        <div class="year-tag">
+          <span>سال : {{ fYear.year }}</span>
+          <button
+            nz-button
+            nz-popconfirm
+            nzPopconfirmTitle="آیا از حذف این سال مالی مطمئن هستید؟"
+            (nzOnConfirm)="deleteYear(fYear.year)"
+            nzShape="circle"
+            nzSize="small"
+            nzDanger
+            class="delete-btn"
+          >
+            <span nz-icon nzType="delete"></span>
+          </button>
+        </div>
+        } @if (vm().years.length === 0) {
+        <nz-empty
+          nzNotFoundContent="در حال حاضر هیچ سال مالی تعریف نشده است."
+        ></nz-empty>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  nzTitle="ایجاد سال مالی جدید"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkText]="'ایجاد'"
+  [nzCancelText]="'انصراف'"
+  [nzOkDisabled]="!vm().years"
+>
+  <ng-container *nzModalContent>
+    <div class="modal-content">
+      <p>لطفا سال مالی مورد نظر خود را وارد کنید.</p>
+      <nz-input-number
+        [ngModel]="newFinancialYear()"
+        (ngModelChange)="onChangeYear($event)"
+        [nzMin]="1400"
+        [nzMax]="1500"
+        [nzStep]="1"
+        nzPlaceHolder="مثلا ۱۴۰۳"
+        style="width: 100%"
+      ></nz-input-number>
+    </div>
+  </ng-container>
+</nz-modal>

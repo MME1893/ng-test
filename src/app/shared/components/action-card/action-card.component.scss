@@ -1,0 +1,66 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.action-card {
+  height: 100%;
+  // background-color: #001529; // Dark navy
+  // color: #f9fafb; // Main text color
+  // border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  transition: transform 0.2s linear;
+
+  &:hover {
+    transform: translateY(-0.4rem) scale(1.01);
+    // box-shadow: 0 0 1rem 0.3rem rgba(54, 54, 54, 0.2);
+  }
+
+  ::ng-deep .ant-card-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    // color: #f9fafb; // ensures header text is white
+
+    // Fix icons being dark
+    ::ng-deep .anticon {
+      // color: #f9fafb !important;
+    }
+
+    // Fix headings (h3, etc.) inheriting dark color
+    h3 {
+      margin: 0;
+      // color: #f9fafb !important;
+    }
+  }
+
+  &__description,
+  &__info {
+    // color: rgba(255, 255, 255, 0.7);
+  }
+
+  &__info {
+    margin-top: 1rem;
+  }
+
+  // Ensure button text looks good on dark bg
+//   ::ng-deep .ant-btn-primary {
+//     background-color: #1677ff;
+//     border: none;
+
+//     &:hover {
+//       background-color: #4096ff;
+//     }
+//   }
+}

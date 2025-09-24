@@ -1,0 +1,68 @@
+<app-page-layout>
+  <nz-tabset page-title (nzSelectChange)="onSelectedPageChange()">
+    <nz-tab nzTitle="لیست درخواست تراکنش مناطق"></nz-tab>
+    <nz-tab nzTitle="لیست درخواست تراکنش سازمان ها"></nz-tab>
+  </nz-tabset>
+  <!-- <h1 page-title>درخواست های تراکنش {{}}</h1>
+  <p page-subtitle>مدیریت مناطق شهرداری و سازمان‌های مربوط به هر منطقه</p> -->
+
+  <h2 content-title class="custom-card__title">
+    لیست درخواست های تراکنش {{ getTabFarsiName() }}
+  </h2>
+  <p content-subtitle class="custom-card__subtitle">
+    تمام مناطق شهرداری تعریف شده در سیستم
+  </p>
+  <nz-table
+    #regionsTable
+    [nzData]="transactionRequests()"
+    [nzSize]="'middle'"
+    class="financial-table"
+    content
+  >
+    <thead>
+      <tr>
+        <th>نام منطقه</th>
+        <th>دلیل</th>
+        <th class="actions-header">عملیات</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (trans of transactionRequests(); track trans.id) {
+      <tr>
+        <td>{{ trans.party_name }}</td>
+        <td>{{ trans.reason }}</td>
+        <td class="actions">
+          <button
+            nz-button
+            nzShape="round"
+            nzType="primary"
+            nzSize="small"
+            (click)="onSelectTransactionItem(trans.id)"
+          >
+            انتقال
+          </button>
+          <button
+            nz-button
+            nzDanger
+            nzShape="round"
+            nzType="primary"
+            nzSize="small"
+            nz-popconfirm
+            nzPopconfirmTitle="آیا از رد این درخواست مطمئن هستید؟"
+            (nzOnConfirm)="onRejectRequest()"
+          >
+            رد درخواست
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </nz-table>
+</app-page-layout>
+
+@if(isSubmitTransferFundModalOpen() && selectedItem() !== undefined) {
+<app-submit-transfer-fund-modal
+  [transferRequestId]="selectedItem()"
+  (onClose)="isSubmitTransferFundModalOpen.set(false)"
+></app-submit-transfer-fund-modal>
+}
