@@ -1,223 +1,132 @@
 .temp-auth-page {
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 24px;
-  background: #f5f7fa;
-  min-height: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 16px;
+  background: #f5f6fa;
+  gap: 24px;
 
-  .page-header {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  .status-message {
+    margin: 0;
+    font-size: 16px;
+    text-align: center;
+    color: #334155;
+    max-width: 420px;
+    line-height: 1.8;
+  }
+}
 
-    h1 {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin: 0 0 12px;
-      color: #0f172a;
-      font-weight: 700;
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+  border-radius: 20px;
+  overflow: hidden;
 
-      span {
-        font-size: 14px;
-        color: #64748b;
-        font-weight: 400;
-      }
-    }
-
-    p {
-      margin: 0;
-      color: #475569;
-      line-height: 1.8;
-    }
+  .card-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    text-align: center;
   }
 
-  .forms-row {
-    .auth-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-
-      .form-field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-
-        .label {
-          font-size: 13px;
-          color: #475569;
-          font-weight: 600;
-        }
-      }
-
-      button {
-        align-self: flex-start;
-      }
-    }
+  .card-subtitle {
+    margin: 12px 0 24px;
+    text-align: center;
+    color: #64748b;
+    line-height: 1.7;
   }
 
-  .session-card {
+  .credential-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
 
-    .session-header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-
-      .next-step {
-        display: flex;
-        flex-direction: row;
-        align-items: baseline;
-        gap: 8px;
-        font-size: 14px;
-
-        .label {
-          color: #475569;
-        }
-
-        strong {
-          color: #0f172a;
-        }
-      }
-    }
-
-    .session-body {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 16px;
-      font-size: 14px;
-      line-height: 1.8;
-
-      .session-info {
-        display: grid;
-        gap: 4px;
-      }
-    }
-
-    .api-field {
+    .form-field {
       display: flex;
       flex-direction: column;
       gap: 8px;
 
       span {
-        font-size: 12px;
-        color: #64748b;
+        font-size: 14px;
+        color: #475569;
         font-weight: 600;
       }
     }
 
-    .session-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-
-      .device-controls {
-        display: flex;
-        flex-direction: row;
-        gap: 8px;
-        flex-wrap: wrap;
-
-        input {
-          min-width: 220px;
-        }
-      }
-
-      .success-message {
-        margin: 0;
-        color: #0f766e;
-        background: #ecfdf5;
-        border-radius: 8px;
-        padding: 12px;
-        font-size: 14px;
-      }
+    button[nz-button] {
+      margin-top: 8px;
+      width: 100%;
+      height: 44px;
+      font-size: 16px;
     }
   }
 
-  .log-card {
+  .switch-auth {
+    margin-top: 12px;
+    text-align: center;
+
+    button[nz-button] {
+      padding: 0;
+      font-size: 14px;
+    }
+  }
+
+  .device-section {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 20px;
+    text-align: center;
 
-    .log-toolbar {
-      display: flex;
-      justify-content: flex-end;
+    input[nz-input] {
+      text-align: center;
     }
 
-    .log-container {
-      max-height: 360px;
-      overflow-y: auto;
-      background: #0f172a;
-      border-radius: 12px;
-      padding: 16px;
-      color: #e2e8f0;
-      font-family: 'Fira Code', 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-
-      .empty-state {
-        margin: 0;
-        text-align: center;
-        color: #94a3b8;
-      }
-
-      .log-entry {
-        background: rgba(15, 23, 42, 0.6);
-        border-radius: 8px;
-        padding: 12px;
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-
-        &.error {
-          border-color: rgba(239, 68, 68, 0.4);
-        }
-
-        &.success {
-          border-color: rgba(16, 185, 129, 0.4);
-        }
-
-        .log-entry__header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 12px;
-          color: #cbd5f5;
-
-          .timestamp {
-            font-family: inherit;
-            letter-spacing: 0.5px;
-          }
-        }
-
-        .message {
-          margin: 0;
-          font-size: 14px;
-          color: #f8fafc;
-        }
-
-        .detail {
-          margin: 0;
-          white-space: pre-wrap;
-          word-break: break-word;
-          background: rgba(15, 23, 42, 0.5);
-          border-radius: 8px;
-          padding: 8px;
-          color: #cbd5f5;
-        }
-      }
+    button[nz-button] {
+      align-self: center;
+      min-width: 220px;
+      height: 44px;
+      font-size: 15px;
     }
+  }
+
+  .refresh-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+
+    button[nz-button] {
+      min-width: 200px;
+      height: 40px;
+    }
+  }
+
+  .success-message {
+    margin: 24px 0 8px;
+    padding: 16px;
+    background: #ecfdf5;
+    color: #047857;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.8;
   }
 }
 
-@media (max-width: 992px) {
-  .temp-auth-page {
-    padding: 16px;
+@media (max-width: 480px) {
+  .auth-card {
+    border-radius: 16px;
+
+    .card-title {
+      font-size: 20px;
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+    }
   }
 }

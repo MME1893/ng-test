@@ -1,22 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzNotificationModule, NzNotificationService } from 'ng-zorro-antd/notification';
-import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzTypographyModule } from 'ng-zorro-antd/typography';
-
-export type LogLevel = 'info' | 'success' | 'error';
-
-export interface LogEntry {
-  timestamp: string;
-  level: LogLevel;
-  message: string;
-  detail?: string;
-}
 
 interface AuthState {
   auth_stage: string;
@@ -41,23 +29,11 @@ interface SessionResponse extends AuthState {
 @Component({
   selector: 'app-temp-auth',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NzButtonModule,
-    NzCardModule,
-    NzGridModule,
-    NzInputModule,
-    NzNotificationModule,
-    NzTagModule,
-    NzTypographyModule,
-  ],
+  imports: [CommonModule, FormsModule, NzButtonModule, NzCardModule, NzInputModule, NzNotificationModule],
   templateUrl: './temp-auth.component.html',
   styleUrls: ['./temp-auth.component.scss'],
 })
-export class TempAuthComponent implements OnInit {
-  @ViewChild('logContainer') private logContainer?: ElementRef<HTMLDivElement>;
-
+export class TempAuthComponent {
   apiBase = 'http://localhost:8001/api';
 
   signUpForm = {
@@ -73,11 +49,12 @@ export class TempAuthComponent implements OnInit {
 
   deviceName = '';
 
+  cardStep: 'credentials' | 'device' = 'credentials';
+  authMode: 'signIn' | 'signUp' = 'signIn';
+
   authToken?: string;
   lastAuthResponse?: AuthResponse;
   session?: SessionResponse;
-
-  logs: LogEntry[] = [];
 
   loading = {
     signUp: false,
@@ -94,10 +71,6 @@ export class TempAuthComponent implements OnInit {
     webauthn_authenticate: 'احراز هویت با دستگاه',
     authenticated: 'احراز هویت کامل شده است',
   };
-
-  ngOnInit(): void {
-    this.log('برای شروع، یکی از فرم‌های ثبت‌نام یا ورود را تکمیل کنید.');
-  }
 
   get nextStepDescription(): string {
     const step = this.state?.next_step;
@@ -121,9 +94,32 @@ export class TempAuthComponent implements OnInit {
     return !!this.state?.webauthn_completed;
   }
 
+  get statusMessage(): string {
+    if (!this.state) {
+      return 'برای شروع، با نام کاربری و رمز عبور خود وارد شوید یا ثبت‌نام کنید.';
+    }
+    if (this.fullyAuthenticated) {
+      return 'کاربر و دستگاه با موفقیت احراز شدند.';
+    }
+    if (this.requiresRegistration) {
+      return 'دستگاه شما هنوز ثبت نشده است. برای ادامه آن را ثبت کنید.';
+    }
+    if (this.requiresAuthentication) {
+      return 'دستگاه شما ثبت شده است. برای تکمیل احراز هویت، از دستگاه خود استفاده کنید.';
+    }
+    return 'اطلاعات ورود شما ثبت شد. مرحله بعدی را ادامه دهید.';
+  }
+
+  switchToSignUp(): void {
+    this.authMode = 'signUp';
+  }
+
+  switchToSignIn(): void {
+    this.authMode = 'signIn';
+  }
+
   async submitSignUp(): Promise<void> {
     this.loading.signUp = true;
-    this.log('ارسال درخواست ثبت‌نام کاربر', this.signUpForm);
     try {
       const response = await this.fetchWithLogging(this.getApiUrl('/authentication/register'), {
         method: 'POST',
@@ -139,7 +135,7 @@ export class TempAuthComponent implements OnInit {
       }
 
       const data = await this.readJson<AuthResponse>(response);
-      await this.handleAuthSuccess(data, 'ثبت‌نام');
+      await this.handleAuthSuccess(data);
       this.notification.success('ثبت‌نام موفق', 'حساب کاربری ایجاد شد.');
     } catch (error) {
       this.handleError('ثبت‌نام ناموفق بود', error);
@@ -150,7 +146,6 @@ export class TempAuthComponent implements OnInit {
 
   async submitSignIn(): Promise<void> {
     this.loading.signIn = true;
-    this.log('ارسال درخواست ورود کاربر', this.signInForm);
     try {
       const body = new URLSearchParams({
         username: this.signInForm.username,
@@ -170,7 +165,7 @@ export class TempAuthComponent implements OnInit {
       }
 
       const data = await this.readJson<AuthResponse>(response);
-      await this.handleAuthSuccess(data, 'ورود');
+      await this.handleAuthSuccess(data);
       this.notification.success('ورود موفق', 'احراز هویت اولیه تکمیل شد.');
     } catch (error) {
       this.handleError('ورود ناموفق بود', error);
@@ -185,7 +180,6 @@ export class TempAuthComponent implements OnInit {
     }
 
     this.loading.session = true;
-    this.log('دریافت اطلاعات کاربر احراز هویت شده');
     try {
       const response = await this.fetchWithLogging(this.getApiUrl('/authentication/me'), {
         headers: this.getAuthHeaders(),
@@ -198,7 +192,6 @@ export class TempAuthComponent implements OnInit {
 
       const data = await this.readJson<SessionResponse>(response);
       this.session = data;
-      this.logSuccess('اطلاعات کاربر با موفقیت دریافت شد', data);
     } catch (error) {
       this.handleError('عدم موفقیت در دریافت اطلاعات کاربر', error);
     } finally {
@@ -212,7 +205,6 @@ export class TempAuthComponent implements OnInit {
     }
 
     this.loading.register = true;
-    this.log('شروع فرآیند ثبت دستگاه WebAuthn');
     try {
       const startResponse = await this.fetchWithLogging(this.getApiUrl('/webauthn/registration/start'), {
         method: 'POST',
@@ -250,7 +242,7 @@ export class TempAuthComponent implements OnInit {
       }
 
       const data = await this.readJson<AuthResponse>(finishResponse);
-      await this.handleAuthSuccess(data, 'ثبت دستگاه');
+      await this.handleAuthSuccess(data);
       this.deviceName = '';
       this.notification.success('ثبت دستگاه موفق', 'دستگاه شما با موفقیت ثبت شد.');
     } catch (error) {
@@ -270,7 +262,6 @@ export class TempAuthComponent implements OnInit {
     }
 
     this.loading.authenticate = true;
-    this.log('شروع فرآیند احراز هویت با WebAuthn');
     try {
       const startResponse = await this.fetchWithLogging(this.getApiUrl('/webauthn/authentication/start'), {
         method: 'POST',
@@ -304,7 +295,7 @@ export class TempAuthComponent implements OnInit {
       }
 
       const data = await this.readJson<AuthResponse>(finishResponse);
-      await this.handleAuthSuccess(data, 'احراز هویت با دستگاه');
+      await this.handleAuthSuccess(data);
       this.notification.success('احراز هویت موفق', 'ورود شما تکمیل شد.');
     } catch (error) {
       if ((error as Error)?.name === 'NotAllowedError') {
@@ -317,18 +308,14 @@ export class TempAuthComponent implements OnInit {
     }
   }
 
-  clearLogs(): void {
-    this.logs = [];
-  }
-
   get state(): AuthState | undefined {
     return this.session ?? this.lastAuthResponse;
   }
 
-  private async handleAuthSuccess(response: AuthResponse, context: string): Promise<void> {
+  private async handleAuthSuccess(response: AuthResponse): Promise<void> {
     this.setToken(response);
     this.lastAuthResponse = response;
-    this.logSuccess(`${context} با موفقیت انجام شد`, response);
+    this.cardStep = 'device';
     await this.refreshSession();
   }
 
@@ -340,7 +327,6 @@ export class TempAuthComponent implements OnInit {
   private ensureToken(): boolean {
     if (!this.authToken) {
       this.notification.warning('نیاز به ورود', 'ابتدا وارد حساب خود شوید.');
-      this.logError('هیچ توکن احراز هویتی در دسترس نیست');
       return false;
     }
     return true;
@@ -349,7 +335,6 @@ export class TempAuthComponent implements OnInit {
   private ensureWebAuthnAvailable(): boolean {
     if (!('credentials' in navigator)) {
       this.notification.error('خطا', 'مرورگر شما از WebAuthn پشتیبانی نمی‌کند.');
-      this.logError('WebAuthn API در دسترس نیست');
       return false;
     }
     return true;
@@ -363,7 +348,7 @@ export class TempAuthComponent implements OnInit {
 
   private handleError(message: string, error: unknown): void {
     const err = error instanceof Error ? error : new Error(String(error));
-    this.logError(message, err);
+    console.error(message, err);
     this.notification.error('خطا', err.message);
   }
 
@@ -381,10 +366,7 @@ export class TempAuthComponent implements OnInit {
   }
 
   private async fetchWithLogging(url: string, options?: RequestInit): Promise<Response> {
-    this.log(`HTTP ${options?.method || 'GET'} ${url}`, options?.body);
-    const response = await fetch(url, options);
-    this.logSuccess(`HTTP ${response.status} ${url}`);
-    return response;
+    return fetch(url, options);
   }
 
   private async readJson<T>(response: Response): Promise<T> {
@@ -395,57 +377,7 @@ export class TempAuthComponent implements OnInit {
     try {
       return JSON.parse(text) as T;
     } catch (error) {
-      this.logError('تجزیه JSON با خطا مواجه شد', error as Error);
       throw error;
-    }
-  }
-
-  private log(message: string, meta?: unknown, level: LogLevel = 'info'): void {
-    const entry: LogEntry = {
-      timestamp: new Date().toLocaleTimeString('fa-IR', { hour12: false }),
-      level,
-      message,
-      detail: this.formatMeta(meta),
-    };
-
-    this.logs = [...this.logs, entry];
-    this.scheduleLogScroll();
-  }
-
-  private logSuccess(message: string, meta?: unknown): void {
-    this.log(message, meta, 'success');
-  }
-
-  private logError(message: string, meta?: unknown): void {
-    this.log(message, meta, 'error');
-  }
-
-  private scheduleLogScroll(): void {
-    const scheduler = typeof queueMicrotask === 'function' ? queueMicrotask : (cb: () => void) => Promise.resolve().then(cb);
-    scheduler(() => this.scrollLogsToBottom());
-  }
-
-  private scrollLogsToBottom(): void {
-    const element = this.logContainer?.nativeElement;
-    if (element) {
-      element.scrollTop = element.scrollHeight;
-    }
-  }
-
-  private formatMeta(meta: unknown): string | undefined {
-    if (meta instanceof Error) {
-      return `${meta.name}: ${meta.message}`;
-    }
-    if (meta === undefined || meta === null || meta === '') {
-      return undefined;
-    }
-    if (typeof meta === 'string') {
-      return meta;
-    }
-    try {
-      return JSON.stringify(meta, null, 2);
-    } catch {
-      return '(unserializable data)';
     }
   }
 
