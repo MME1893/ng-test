@@ -1,121 +1,145 @@
 <div class="temp-auth-page">
-  <div class="page-header">
+  <header class="page-header">
     <h1>
-      🔐 کلاینت آزمایشی WebAuthn
-      <span>امکان تست تمامی سرویس‌های /api/webauthn/* در محیط مرورگر</span>
+      صفحه موقت احراز هویت
+      <span>شبیه‌سازی فرآیند ثبت‌نام، ورود و WebAuthn در محیط آزمایشی</span>
     </h1>
     <p>
-      از این صفحه برای ثبت، احراز هویت و مدیریت دستگاه‌های WebAuthn استفاده کنید. پیکربندی درخواست‌ها را مطابق با محیط
-      اجرایی خود تنظیم نموده و سپس عملیات مورد نظر را آغاز کنید.
+      برای تجربه کامل، ابتدا یکی از فرم‌های زیر را تکمیل کنید. پس از دریافت توکن، وضعیت احراز هویت و مرحله بعدی از طریق
+      کارت «وضعیت احراز هویت» نمایش داده می‌شود.
     </p>
-  </div>
+  </header>
 
-  <div nz-row [nzGutter]="[16, 16]">
-    <div nz-col [nzSpan]="24" [nzLg]="14">
-      <nz-card nzTitle="پیکربندی درخواست" class="config-card">
-        <div class="config-grid">
+  <div nz-row [nzGutter]="[16, 16]" class="forms-row">
+    <div nz-col [nzSpan]="24" [nzLg]="12">
+      <nz-card nzTitle="ثبت‌نام کاربر جدید">
+        <form class="auth-form" (ngSubmit)="submitSignUp()">
           <label class="form-field">
-            <span class="label-text">آدرس پایه API</span>
-            <input nz-input type="url" [(ngModel)]="apiBase" placeholder="http://localhost:8001/api" />
+            <span class="label">نام کاربری</span>
+            <input nz-input name="signup-username" [(ngModel)]="signUpForm.username" required placeholder="user1" />
           </label>
-
-          <label class="form-field full-width">
-            <span class="label-text">هدر احراز هویت</span>
-            <textarea
-              nz-input
-              rows="3"
-              [(ngModel)]="authToken"
-              placeholder="Bearer &lt;jwt&gt;"
-            ></textarea>
+          <label class="form-field">
+            <span class="label">ایمیل</span>
+            <input nz-input type="email" name="signup-email" [(ngModel)]="signUpForm.email" required placeholder="user@example.com" />
           </label>
-        </div>
-
-        <div class="action-row">
-          <button nz-button nzType="primary" (click)="startRegistration()" [nzLoading]="loading.register">
-            شروع ثبت‌نام
+          <label class="form-field">
+            <span class="label">رمز عبور</span>
+            <input nz-input type="password" name="signup-password" [(ngModel)]="signUpForm.password" required placeholder="رمز عبور" />
+          </label>
+          <button nz-button nzType="primary" [nzLoading]="loading.signUp" type="submit">
+            ثبت‌نام
           </button>
-          <button nz-button nzType="default" (click)="startAuthentication()" [nzLoading]="loading.authenticate">
-            شروع احراز هویت
-          </button>
-          <button nz-button nzType="default" nzGhost (click)="listDevices()" [nzLoading]="loading.list">
-            به‌روزرسانی دستگاه‌ها
-          </button>
-          <button nz-button nzType="default" nzGhost (click)="getMe()" [nzLoading]="loading.getMe">
-            دریافت اطلاعات کاربر
-          </button>
-        </div>
+        </form>
       </nz-card>
     </div>
+    <div nz-col [nzSpan]="24" [nzLg]="12">
+      <nz-card nzTitle="ورود کاربر">
+        <form class="auth-form" (ngSubmit)="submitSignIn()">
+          <label class="form-field">
+            <span class="label">نام کاربری</span>
+            <input nz-input name="signin-username" [(ngModel)]="signInForm.username" required placeholder="user1" />
+          </label>
+          <label class="form-field">
+            <span class="label">رمز عبور</span>
+            <input nz-input type="password" name="signin-password" [(ngModel)]="signInForm.password" required placeholder="رمز عبور" />
+          </label>
+          <button nz-button nzType="primary" [nzLoading]="loading.signIn" type="submit">
+            ورود
+          </button>
+        </form>
+      </nz-card>
+    </div>
+  </div>
 
-    <div nz-col [nzSpan]="24" [nzLg]="10" class="side-column">
-      <nz-card nzTitle="حذف دستگاه" class="delete-card">
-        <p class="card-helper">شناسه Credential را از لیست دستگاه‌ها یا پاسخ سرویس دریافت کرده و در این قسمت وارد کنید.</p>
-        <div class="delete-grid">
+  <nz-card nzTitle="وضعیت احراز هویت" class="session-card">
+    <div class="session-header">
+      <div class="next-step">
+        <span class="label">گام بعدی:</span>
+        <strong>{{ nextStepDescription }}</strong>
+      </div>
+      <nz-tag *ngIf="state?.auth_stage" nzColor="blue">{{ state?.auth_stage }}</nz-tag>
+      <nz-tag *ngIf="fullyAuthenticated" nzColor="green">احراز هویت نهایی شد</nz-tag>
+    </div>
+
+    <div class="session-body">
+      <div class="session-info" *ngIf="session; else guestInfo">
+        <p><strong>کاربر:</strong> {{ session?.username }}</p>
+        <p><strong>ایمیل:</strong> {{ session?.email }}</p>
+        <p><strong>شناسه کاربر:</strong> {{ session?.id }}</p>
+        <p><strong>ایجاد شده در:</strong> {{ session?.created_at | date: 'medium' }}</p>
+      </div>
+      <ng-template #guestInfo>
+        <p>هنوز اطلاعات کاربری دریافت نشده است. ابتدا ثبت‌نام یا ورود را انجام دهید.</p>
+      </ng-template>
+    </div>
+
+    <div class="api-field">
+      <label>
+        <span>آدرس پایه API</span>
+        <input
+          nz-input
+          [(ngModel)]="apiBase"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="http://localhost:8001/api"
+        />
+      </label>
+    </div>
+
+    <div class="session-actions">
+      <button nz-button nzType="default" (click)="refreshSession()" [nzLoading]="loading.session">
+        به‌روزرسانی وضعیت
+      </button>
+
+      <ng-container *ngIf="requiresRegistration">
+        <div class="device-controls">
           <input
             nz-input
-            [(ngModel)]="credentialId"
-            placeholder="شناسه Credential"
-            aria-label="شناسه Credential"
+            placeholder="نام دستگاه (اختیاری)"
+            [(ngModel)]="deviceName"
+            [ngModelOptions]="{ standalone: true }"
           />
-          <button
-            nz-button
-            nzType="default"
-            nzDanger
-            (click)="deleteDevice()"
-            [nzLoading]="loading.delete"
-          >
-            حذف دستگاه
+          <button nz-button nzType="primary" (click)="registerDevice()" [nzLoading]="loading.register">
+            ثبت دستگاه
           </button>
         </div>
-      </nz-card>
+      </ng-container>
 
-      <nz-card nzTitle="دستگاه‌های ثبت‌شده" class="devices-card" [nzLoading]="loading.list">
-        <ng-container *ngIf="devices.length; else emptyDevices">
-          <div class="device-card" *ngFor="let device of devices">
-            <div class="device-header">
-              <h3>{{ device.device_name || 'بدون نام' }}</h3>
-              <nz-tag nzColor="blue">{{ device.sign_count }} بار استفاده</nz-tag>
-            </div>
-            <dl>
-              <div>
-                <dt>Credential ID</dt>
-                <dd>{{ device.credential_id }}</dd>
-              </div>
-              <div>
-                <dt>تاریخ ایجاد</dt>
-                <dd>{{ device.created_at || '—' }}</dd>
-              </div>
-              <div>
-                <dt>آخرین استفاده</dt>
-                <dd>{{ device.last_used || '—' }}</dd>
-              </div>
-            </dl>
-          </div>
-        </ng-container>
-        <ng-template #emptyDevices>
-          <p class="empty-state">تا کنون دستگاهی ثبت نشده است.</p>
-        </ng-template>
-      </nz-card>
+      <button
+        nz-button
+        nzType="primary"
+        nzGhost
+        *ngIf="requiresAuthentication"
+        (click)="authenticateDevice()"
+        [nzLoading]="loading.authenticate"
+      >
+        احراز هویت با دستگاه
+      </button>
+
+      <p class="success-message" *ngIf="fullyAuthenticated">
+        کاربر با موفقیت احراز هویت شد و نیازی به اقدام دیگری نیست.
+      </p>
     </div>
-  </div>
+  </nz-card>
 
-  <nz-card nzTitle="گزارش‌ها" class="log-card">
+  <nz-card nzTitle="گزارش رویدادها" class="log-card">
     <div class="log-toolbar">
-      <button nz-button nzType="default" nzGhost (click)="clearLog()">پاک‌سازی گزارش‌ها</button>
+      <button nz-button nzType="default" nzGhost (click)="clearLogs()">پاک‌سازی گزارش‌ها</button>
     </div>
     <div class="log-container" #logContainer>
-      <ng-container *ngIf="logs.length; else emptyLogs">
+      <ng-container *ngIf="logs.length; else emptyLog">
         <div class="log-entry" *ngFor="let entry of logs" [ngClass]="entry.level">
           <div class="log-entry__header">
             <span class="timestamp">{{ entry.timestamp }}</span>
-            <nz-tag [nzColor]="logColor(entry.level)">{{ entry.level | uppercase }}</nz-tag>
+            <nz-tag [nzColor]="entry.level === 'error' ? 'red' : entry.level === 'success' ? 'green' : 'blue'">
+              {{ entry.level | uppercase }}
+            </nz-tag>
           </div>
           <p class="message">{{ entry.message }}</p>
           <pre class="detail" *ngIf="entry.detail">{{ entry.detail }}</pre>
         </div>
       </ng-container>
-      <ng-template #emptyLogs>
-        <p class="empty-state">هنوز گزارشی ثبت نشده است.</p>
+      <ng-template #emptyLog>
+        <p class="empty-state">هنوز رویدادی ثبت نشده است.</p>
       </ng-template>
     </div>
   </nz-card>
