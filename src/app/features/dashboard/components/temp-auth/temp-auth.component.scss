@@ -1,0 +1,226 @@
+.temp-auth-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background: var(--page-background, #f5f5f5);
+
+  .page-header {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 28px;
+    box-shadow: 0 12px 32px -12px rgba(15, 23, 42, 0.18);
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      span {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #64748b;
+      }
+    }
+
+    p {
+      margin: 16px 0 0;
+      color: #475569;
+      line-height: 1.7;
+    }
+  }
+
+  nz-card {
+    border-radius: 16px;
+    box-shadow: 0 12px 32px -18px rgba(15, 23, 42, 0.25);
+  }
+
+  .config-card {
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .label-text {
+          font-weight: 600;
+          color: #0f172a;
+        }
+
+        textarea[nz-input] {
+          resize: vertical;
+        }
+      }
+
+      .full-width {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .action-row {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  }
+
+  .side-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .delete-card {
+    .card-helper {
+      margin-bottom: 12px;
+      color: #64748b;
+    }
+
+    .delete-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  .devices-card {
+    .device-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      background: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 28px -18px rgba(15, 23, 42, 0.25);
+      }
+
+      .device-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+
+        h3 {
+          margin: 0;
+          font-size: 1.1rem;
+          color: #0f172a;
+        }
+      }
+
+      dl {
+        margin: 0;
+        display: grid;
+        gap: 8px;
+
+        div {
+          display: grid;
+          grid-template-columns: 140px 1fr;
+          gap: 12px;
+
+          dt {
+            margin: 0;
+            font-weight: 600;
+            color: #475569;
+          }
+
+          dd {
+            margin: 0;
+            color: #0f172a;
+            word-break: break-all;
+            direction: ltr;
+          }
+        }
+      }
+    }
+  }
+
+  .log-card {
+    .log-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .log-container {
+      max-height: 340px;
+      overflow-y: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      background: #0f172a;
+    }
+
+    .log-entry {
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      color: #e2e8f0;
+      border-left: 3px solid transparent;
+
+      &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        gap: 12px;
+
+        .timestamp {
+          font-family: 'Roboto Mono', monospace;
+          font-size: 0.85rem;
+          color: rgba(226, 232, 240, 0.7);
+        }
+      }
+
+      .message {
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .detail {
+        margin: 8px 0 0;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        color: rgba(226, 232, 240, 0.9);
+        white-space: pre-wrap;
+        direction: ltr;
+      }
+
+      &.info {
+        border-left-color: #38bdf8;
+      }
+
+      &.success {
+        border-left-color: #22c55e;
+      }
+
+      &.error {
+        border-left-color: #ef4444;
+      }
+    }
+  }
+
+  .empty-state {
+    margin: 0;
+    padding: 24px 12px;
+    text-align: center;
+    color: #94a3b8;
+  }
+}
