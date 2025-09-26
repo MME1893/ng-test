@@ -34,7 +34,7 @@ interface SessionResponse extends AuthState {
   styleUrls: ['./temp-auth.component.scss'],
 })
 export class TempAuthComponent {
-  apiBase = 'http://localhost:8001/api';
+  apiBase = 'http://digcity.ir/api';
 
   signUpForm = {
     username: '',

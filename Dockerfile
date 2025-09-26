@@ -1,4 +1,4 @@
-FROM node:20 AS build
+FROM docker.arvancloud.ir/node:20 AS build
 
 WORKDIR /app
 
@@ -10,11 +10,11 @@ COPY . .
 
 RUN npm run build -- --configuration production
 
-FROM nginx:alpine
+FROM docker.arvancloud.ir/nginx:alpine
 
 COPY --from=build /app/dist/mayoralty-automation/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 4200
+EXPOSE 4201
 
 CMD ["nginx", "-g", "daemon off;"]
